@@ -1,0 +1,2295 @@
+/* =====================================================
+   GLOBAL VARIABLE
+===================================================== */
+
+let categoryData = [];
+let supplierData = [];
+let locationData = [];
+let unitData = [];
+let sparepartData = [];
+
+let editCategoryId = "";
+let editSupplierId = "";
+let editLocationId = "";
+let editUnitId = "";
+let editSparepartId = "";
+
+let sparepartImage = "";
+
+let currentPage = "Dashboard";
+
+/* =====================================================
+   LOADING
+===================================================== */
+
+function showSkeleton(){
+
+    document.getElementById("mainContent").innerHTML=`let editSparepartId
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body">
+
+            <div class="placeholder-glow mb-3">
+                <span class="placeholder col-4"></span>
+            </div>
+
+            <div class="placeholder-glow mb-2">
+                <span class="placeholder col-12"></span>
+            </div>
+
+            <div class="placeholder-glow mb-2">
+                <span class="placeholder col-12"></span>
+            </div>
+
+            <div class="placeholder-glow mb-2">
+                <span class="placeholder col-12"></span>
+            </div>
+
+        </div>
+
+    </div>
+
+    `;
+
+}
+
+/* =====================================================
+   TOAST
+===================================================== */
+
+function showToast(type,title,message){
+
+    const toast=document.getElementById("appToast");
+
+    const icon=document.getElementById("toastIcon");
+
+    const toastTitle=document.getElementById("toastTitle");
+
+    const toastMessage=document.getElementById("toastMessage");
+
+    icon.className="bi me-2";
+
+    switch(type){
+
+        case "success":
+
+            icon.classList.add(
+                "bi-check-circle-fill",
+                "text-success"
+            );
+
+        break;
+
+        case "error":
+
+            icon.classList.add(
+                "bi-x-circle-fill",
+                "text-danger"
+            );
+
+        break;
+
+        case "warning":
+
+            icon.classList.add(
+                "bi-exclamation-circle-fill",
+                "text-warning"
+            );
+
+        break;
+
+        default:
+
+            icon.classList.add(
+                "bi-info-circle-fill",
+                "text-primary"
+            );
+
+    }
+
+    toastTitle.innerHTML=title;
+
+    toastMessage.innerHTML=message;
+
+    new bootstrap.Toast(toast).show();
+
+}
+
+/* =====================================================
+   TOOLTIP
+===================================================== */
+
+function enableTooltip(){
+
+    document
+    .querySelectorAll('[data-bs-toggle="tooltip"]')
+    .forEach(function(el){
+
+        new bootstrap.Tooltip(el);
+
+    });
+
+}
+
+/* =====================================================
+   SIDEBAR
+===================================================== */
+
+function toggleSidebar(){
+
+    document
+    .querySelector(".wrapper")
+    .classList
+    .toggle("collapsed");
+
+}
+
+function toggleMenu(el){
+
+    el.classList.toggle("active");
+
+}
+
+/* =====================================================
+   DASHBOARD
+===================================================== */
+
+function openDashboard() {
+
+    currentPage = "Dashboard";
+
+    google.script.run
+    .withSuccessHandler(function(html){
+
+        console.log("HTML:", html);
+
+        alert(html.substring(0,200));
+
+        document.getElementById("mainContent").innerHTML = html;
+
+    })
+    .withFailureHandler(function(err){
+
+        console.error(err);
+
+        alert(err.message);
+
+    })
+    .loadPage("DashboardHome");
+
+}
+
+function loadDashboard(){
+
+    google.script.run
+
+    .withSuccessHandler(function(r){
+
+        document.getElementById("totalSparepart").innerHTML=r.totalSparepart;
+
+        document.getElementById("totalStock").innerHTML=r.totalStock;
+
+        document.getElementById("lowStock").innerHTML=r.lowStock;
+
+        document.getElementById("outStock").innerHTML=r.outStock;
+
+        document.getElementById("differenceStock").innerHTML=r.difference;
+
+        document.getElementById("pendingAdjustment").innerHTML=r.pending;
+
+    })
+
+    .getDashboard();
+
+}
+
+/* =====================================================
+   LOGIN
+===================================================== */
+
+function doLogin(username,password){
+
+    google.script.run
+
+    .withSuccessHandler(function(r){
+
+        if(r.success){
+
+            location.reload();
+
+        }else{
+
+            showToast(
+
+                "error",
+
+                "Login Gagal",
+
+                r.message
+
+            );
+
+        }
+
+    })
+
+    .login(username,password);
+
+}
+
+/* =====================================================
+   CATEGORY
+===================================================== */
+
+function openCategory(){
+
+    currentPage="Category";
+
+    showSkeleton();
+
+    google.script.run
+
+    .withSuccessHandler(function(html){
+
+        document.getElementById("mainContent").innerHTML=html;
+
+        document.getElementById("pageTitle").innerHTML="Master Data";
+
+        document.getElementById("pageSubTitle").innerHTML="Kelola data Category";
+
+        loadCategory();
+
+    })
+
+    .loadPage("Category");
+
+}
+
+function loadCategory(){
+
+    google.script.run
+
+    .withSuccessHandler(function(data){
+
+        categoryData=data;
+
+        renderCategory(data);
+
+    })
+
+    .getCategory();
+
+}
+
+function renderCategory(data){
+
+    let html="";
+
+    data.forEach(function(item){
+
+        html+=`
+
+        <tr>
+
+            <td>${item.id}</td>
+
+            <td>${item.code}</td>
+
+            <td>${item.name}</td>
+
+            <td>
+
+                ${
+                    item.status=="ACTIVE"
+
+                    ?
+
+                    '<span class="badge bg-success">ACTIVE</span>'
+
+                    :
+
+                    '<span class="badge bg-danger">NON ACTIVE</span>'
+
+                }
+
+            </
+                        <td class="text-center">
+
+                <button
+                    class="btn btn-warning btn-sm me-1"
+                    onclick="editCategory('${item.id}')">
+
+                    <i class="bi bi-pencil"></i>
+
+                </button>
+
+                <button
+                    class="btn btn-danger btn-sm"
+                    onclick="deleteCategory('${item.id}')">
+
+                    <i class="bi bi-trash"></i>
+
+                </button>
+
+            </td>
+
+        </tr>
+
+        `;
+
+    });
+
+    document.getElementById("categoryBody").innerHTML=html;
+
+}
+
+function addCategory(){
+
+    editCategoryId="";
+
+    document.getElementById("categoryCode").value="";
+
+    document.getElementById("categoryName").value="";
+
+    document.getElementById("categoryStatus").value="ACTIVE";
+
+    document.getElementById("btnSaveCategory").innerHTML=
+
+    '<i class="bi bi-check-circle"></i> Simpan';
+
+    new bootstrap.Modal(
+
+        document.getElementById("categoryModal")
+
+    ).show();
+
+}
+
+function editCategory(id){
+
+    const item=categoryData.find(r=>String(r.id)==String(id));
+
+    if(!item) return;
+
+    editCategoryId=id;
+
+    document.getElementById("categoryCode").value=item.code;
+
+    document.getElementById("categoryName").value=item.name;
+
+    document.getElementById("categoryStatus").value=item.status;
+
+    document.getElementById("btnSaveCategory").innerHTML=
+
+    '<i class="bi bi-pencil"></i> Update';
+
+    new bootstrap.Modal(
+
+        document.getElementById("categoryModal")
+
+    ).show();
+
+}
+
+function saveCategory(){
+
+    const code=document.getElementById("categoryCode").value.trim();
+
+    const name=document.getElementById("categoryName").value.trim();
+
+    const status=document.getElementById("categoryStatus").value;
+
+    if(code==""||name==""){
+
+        showToast(
+
+            "warning",
+
+            "Validasi",
+
+            "Lengkapi data terlebih dahulu."
+
+        );
+
+        return;
+
+    }
+
+    if(editCategoryId==""){
+
+        google.script.run
+
+        .withSuccessHandler(function(){
+
+            bootstrap.Modal.getInstance(
+
+                document.getElementById("categoryModal")
+
+            ).hide();
+
+            loadCategory();
+
+            showToast(
+
+                "success",
+
+                "Berhasil",
+
+                "Category berhasil disimpan."
+
+            );
+
+        })
+
+        .saveCategory(
+
+            code,
+
+            name,
+
+            status
+
+        );
+
+    }else{
+
+        google.script.run
+
+        .withSuccessHandler(function(){
+
+            bootstrap.Modal.getInstance(
+
+                document.getElementById("categoryModal")
+
+            ).hide();
+
+            loadCategory();
+
+            showToast(
+
+                "success",
+
+                "Berhasil",
+
+                "Category berhasil diupdate."
+
+            );
+
+        })
+
+        .updateCategory(
+
+            editCategoryId,
+
+            code,
+
+            name,
+
+            status
+
+        );
+
+    }
+
+}
+
+function deleteCategory(id){
+
+    if(!confirm("Hapus Category ini?")) return;
+
+    google.script.run
+
+    .withSuccessHandler(function(){
+
+        loadCategory();
+
+        showToast(
+
+            "success",
+
+            "Berhasil",
+
+            "Category berhasil dihapus."
+
+        );
+
+    })
+
+    .deleteCategory(id);
+
+}
+
+function searchCategory(){
+
+    const key=document
+
+    .getElementById("searchCategory")
+
+    .value
+
+    .toLowerCase();
+
+    renderCategory(
+
+        categoryData.filter(function(r){
+
+            return(
+
+                r.code.toLowerCase().includes(key)||
+
+                r.name.toLowerCase().includes(key)
+
+            );
+
+        })
+
+    );
+
+}
+
+/* =====================================================
+   SUPPLIER
+===================================================== */
+
+function openSupplier(){
+
+    currentPage="Supplier";
+
+    showSkeleton();
+
+    google.script.run
+
+    .withSuccessHandler(function(html){
+
+        document.getElementById("mainContent").innerHTML=html;
+
+        document.getElementById("pageTitle").innerHTML="Master Data";
+
+        document.getElementById("pageSubTitle").innerHTML="Kelola data Supplier";
+
+        loadSupplier();
+
+    })
+
+    .loadPage("Supplier");
+
+}
+
+function loadSupplier(){
+
+    google.script.run
+
+    .withSuccessHandler(function(data){
+
+        supplierData=data;
+
+        renderSupplier(data);
+
+    })
+
+    .getSupplier();
+
+}
+
+function renderSupplier(data){
+
+    let html="";
+
+    data.forEach(function(item){
+
+        html+=`
+
+        <tr>
+
+            <td>${item.id}</td>
+
+            <td>${item.code}</td>
+
+            <td>${item.name}</td>
+
+            <td>${item.pic}</td>
+
+            <td>${item.phone}</td>
+
+            <td>
+
+                ${
+                    item.status=="ACTIVE"
+
+                    ?
+
+                    '<span class="badge bg-success">ACTIVE</span>'
+
+                    :
+
+                    '<span class="badge bg-danger">NON ACTIVE</span>'
+
+                }
+
+            </td>
+
+            <td class="text-center">
+
+                <button
+                    class="btn btn-warning btn-sm me-1"
+                    onclick="editSupplier('${item.id}')">
+
+                    <i class="bi bi-pencil"></i>
+
+                </button>
+
+                <button
+                    class="btn btn-danger btn-sm"
+                    onclick="deleteSupplier('${item.id}')">
+
+                    <i class="bi bi-trash"></i>
+
+                </button>
+
+            </td>
+
+        </tr>
+
+        `;
+
+    });
+
+    document.getElementById("supplierBody").innerHTML=html;
+
+}
+
+function addSupplier(){
+
+    editSupplierId="";
+
+    document.getElementById("supCode").value="";
+
+    document.getElementById("supName").value="";
+
+    document.getElementById("supPIC").value="";
+
+    document.getElementById("supPhone").value="";
+
+    document.getElementById("supAddress").value="";
+
+    document.getElementById("supStatus").value="ACTIVE";
+
+    document.getElementById("btnSaveSupplier").innerHTML=
+
+    '<i class="bi bi-check-circle"></i> Simpan';
+
+    new bootstrap.Modal(
+
+        document.getElementById("supplierModal")
+
+    ).show();
+
+}
+
+function editSupplier(id){
+
+    const item=supplierData.find(r=>String(r.id)==String(id));
+
+    if(!item) return;
+
+    editSupplierId=id;
+
+    document.getElementById("supCode").value=item.code;
+
+    document.getElementById("supName").value=item.name;
+
+    document.getElementById("supPIC").value=item.pic;
+
+    document.getElementById("supPhone").value=item.phone;
+
+    document.getElementById("supAddress").value=item.address;
+
+    document.getElementById("supStatus").value=item.status;
+
+    document.getElementById("btnSaveSupplier").innerHTML=
+
+    '<i class="bi bi-pencil"></i> Update';
+
+    new bootstrap.Modal(
+
+        document.getElementById("supplierModal")
+
+    ).show();
+
+}
+
+function saveSupplier(){
+
+    const obj={
+
+        id:editSupplierId,
+
+        code:document.getElementById("supCode").value.trim(),
+
+        name:document.getElementById("supName").value.trim(),
+
+        pic:document.getElementById("supPIC").value.trim(),
+
+        phone:document.getElementById("supPhone").value.trim(),
+
+        address:document.getElementById("supAddress").value.trim(),
+
+        status:document.getElementById("supStatus").value
+
+    };
+
+    if(obj.code==""||obj.name==""){
+
+        showToast(
+
+            "warning",
+
+            "Validasi",
+
+            "Kode dan Nama Supplier wajib diisi."
+
+        );
+
+        return;
+
+    }
+
+    const modal=bootstrap.Modal.getInstance(
+
+        document.getElementById("supplierModal")
+
+    );
+
+    if(editSupplierId==""){
+
+        google.script.run
+
+        .withSuccessHandler(function(){
+
+            modal.hide();
+
+            loadSupplier();
+
+            showToast(
+
+                "success",
+
+                "Berhasil",
+
+                "Supplier berhasil disimpan."
+
+            );
+
+        })
+
+        .saveSupplier(obj);
+
+    }
+
+    else{
+
+        google.script.run
+
+        .withSuccessHandler(function(){
+
+            modal.hide();
+
+            loadSupplier();
+
+            showToast(
+
+                "success",
+
+                "Berhasil",
+
+                "Supplier berhasil diupdate."
+
+            );
+
+        })
+
+        .updateSupplier(obj);
+
+    }
+
+}
+
+function deleteSupplier(id){
+
+    if(!confirm("Hapus Supplier ini ?")) return;
+
+    google.script.run
+
+    .withSuccessHandler(function(){
+
+        loadSupplier();
+
+        showToast(
+
+            "success",
+
+            "Berhasil",
+
+            "Supplier berhasil dihapus."
+
+        );
+
+    })
+
+    .deleteSupplier(id);
+
+}
+
+function searchSupplier(){
+
+    const key=document
+
+    .getElementById("searchSupplier")
+
+    .value
+
+    .toLowerCase();
+
+    renderSupplier(
+
+        supplierData.filter(function(r){
+
+            return(
+
+                r.code.toLowerCase().includes(key)||
+
+                r.name.toLowerCase().includes(key)||
+
+                r.pic.toLowerCase().includes(key)||
+
+                r.phone.toLowerCase().includes(key)
+
+            );
+
+        })
+
+    );
+
+}
+
+/* =====================================================
+   LOCATION
+===================================================== */
+
+function openLocation(){
+
+    currentPage="Location";
+
+    showSkeleton();
+
+    google.script.run
+
+    .withSuccessHandler(function(html){
+
+        document.getElementById("mainContent").innerHTML=html;
+
+        document.getElementById("pageTitle").innerHTML="Master Data";
+
+        document.getElementById("pageSubTitle").innerHTML="Kelola data Location";
+
+        loadLocation();
+
+    })
+
+    .loadPage("Location");
+
+}
+
+function loadLocation(){
+
+    google.script.run
+
+    .withSuccessHandler(function(data){
+
+        locationData=data;
+
+        renderLocation(data);
+
+    })
+
+    .getLocation();
+
+}
+
+function renderLocation(data){
+
+    let html="";
+
+    data.forEach(function(item){
+
+        html+=`
+
+        <tr>
+
+            <td>${item.id}</td>
+
+            <td>${item.code}</td>
+
+            <td>${item.name}</td>
+
+            <td>
+
+                ${
+                    item.status=="ACTIVE"
+
+                    ?
+
+                    '<span class="badge bg-success">ACTIVE</span>'
+
+                    :
+
+                    '<span class="badge bg-danger">NON ACTIVE</span>'
+
+                }
+
+            </td>
+
+            <td class="text-center">
+
+                <button
+                    class="btn btn-warning btn-sm me-1"
+                    onclick="editLocation('${item.id}')">
+
+                    <i class="bi bi-pencil"></i>
+
+                </button>
+
+                <button
+                    class="btn btn-danger btn-sm"
+                    onclick="deleteLocation('${item.id}')">
+
+                    <i class="bi bi-trash"></i>
+
+                </button>
+
+            </td>
+
+        </tr>
+
+        `;
+
+    });
+
+    document.getElementById("locationBody").innerHTML=html;
+
+}
+
+function addLocation(){
+
+    editLocationId="";
+
+    document.getElementById("locationCode").value="";
+
+    document.getElementById("locationName").value="";
+
+    document.getElementById("locationStatus").value="ACTIVE";
+
+    document.getElementById("btnSaveLocation").innerHTML=
+
+    '<i class="bi bi-check-circle"></i> Simpan';
+
+    new bootstrap.Modal(
+
+        document.getElementById("locationModal")
+
+    ).show();
+
+}
+
+function editLocation(id){
+
+    const item=locationData.find(r=>String(r.id)==String(id));
+
+    if(!item) return;
+
+    editLocationId=id;
+
+    document.getElementById("locationCode").value=item.code;
+
+    document.getElementById("locationName").value=item.name;
+
+    document.getElementById("locationStatus").value=item.status;
+
+    document.getElementById("btnSaveLocation").innerHTML=
+
+    '<i class="bi bi-pencil"></i> Update';
+
+    new bootstrap.Modal(
+
+        document.getElementById("locationModal")
+
+    ).show();
+
+}
+
+function saveLocation(){
+
+    const code=document.getElementById("locationCode").value.trim();
+
+    const name=document.getElementById("locationName").value.trim();
+
+    const status=document.getElementById("locationStatus").value;
+
+    if(code==""||name==""){
+
+        showToast(
+
+            "warning",
+
+            "Validasi",
+
+            "Kode dan Nama Location wajib diisi."
+
+        );
+
+        return;
+
+    }
+
+    const modal=bootstrap.Modal.getInstance(
+
+        document.getElementById("locationModal")
+
+    );
+
+    if(editLocationId==""){
+
+        google.script.run
+
+        .withSuccessHandler(function(){
+
+            modal.hide();
+
+            loadLocation();
+
+            showToast(
+
+                "success",
+
+                "Berhasil",
+
+                "Location berhasil disimpan."
+
+            );
+
+        })
+
+        .saveLocation(
+
+            code,
+
+            name,
+
+            status
+
+        );
+
+    }
+
+    else{
+
+        google.script.run
+
+        .withSuccessHandler(function(){
+
+            modal.hide();
+
+            loadLocation();
+
+            showToast(
+
+                "success",
+
+                "Berhasil",
+
+                "Location berhasil diupdate."
+
+            );
+
+        })
+
+        .updateLocation(
+
+            editLocationId,
+
+            code,
+
+            name,
+
+            status
+
+        );
+
+    }
+
+}
+
+function deleteLocation(id){
+
+    if(!confirm("Hapus Location ini ?")) return;
+
+    google.script.run
+
+    .withSuccessHandler(function(){
+
+        loadLocation();
+
+        showToast(
+
+            "success",
+
+            "Berhasil",
+
+            "Location berhasil dihapus."
+
+        );
+
+    })
+
+    .deleteLocation(id);
+
+}
+
+function searchLocation(){
+
+    const key=document
+
+    .getElementById("searchLocation")
+
+    .value
+
+    .toLowerCase();
+
+    renderLocation(
+
+        locationData.filter(function(r){
+
+            return(
+
+                r.code.toLowerCase().includes(key)||
+
+                r.name.toLowerCase().includes(key)
+
+            );
+
+        })
+
+    );
+
+}
+
+/* =====================================================
+   UNIT
+===================================================== */
+
+function openUnit(){
+
+    currentPage="Unit";
+
+    showSkeleton();
+
+    google.script.run
+
+    .withSuccessHandler(function(html){
+
+        document.getElementById("mainContent").innerHTML=html;
+
+        document.getElementById("pageTitle").innerHTML="Master Data";
+
+        document.getElementById("pageSubTitle").innerHTML="Kelola data Unit";
+
+        loadUnit();
+
+    })
+
+    .loadPage("Unit");
+
+}
+
+function loadUnit(){
+
+    google.script.run
+
+    .withSuccessHandler(function(data){
+
+        unitData=data;
+
+        renderUnit(data);
+
+    })
+
+    .getUnit();
+
+}
+
+function renderUnit(data){
+
+    let html="";
+
+    data.forEach(function(item){
+
+        html+=`
+
+        <tr>
+
+            <td>${item.id}</td>
+
+            <td>${item.code}</td>
+
+            <td>${item.name}</td>
+
+            <td>
+
+                ${
+                    item.status=="ACTIVE"
+
+                    ?
+
+                    '<span class="badge bg-success">ACTIVE</span>'
+
+                    :
+
+                    '<span class="badge bg-danger">NON ACTIVE</span>'
+
+                }
+
+            </td>
+
+            <td class="text-center">
+
+                <button
+                    class="btn btn-warning btn-sm me-1"
+                    onclick="editUnit('${item.id}')">
+
+                    <i class="bi bi-pencil"></i>
+
+                </button>
+
+                <button
+                    class="btn btn-danger btn-sm"
+                    onclick="deleteUnit('${item.id}')">
+
+                    <i class="bi bi-trash"></i>
+
+                </button>
+
+            </td>
+
+        </tr>
+
+        `;
+
+    });
+
+    document.getElementById("unitBody").innerHTML=html;
+
+}
+
+function addUnit(){
+
+    editUnitId="";
+
+    document.getElementById("unitCode").value="";
+
+    document.getElementById("unitName").value="";
+
+    document.getElementById("unitStatus").value="ACTIVE";
+
+    document.getElementById("btnSaveUnit").innerHTML=
+
+    '<i class="bi bi-check-circle"></i> Simpan';
+
+    new bootstrap.Modal(
+
+        document.getElementById("unitModal")
+
+    ).show();
+
+}
+
+function editUnit(id){
+
+    const item=unitData.find(r=>String(r.id)==String(id));
+
+    if(!item) return;
+
+    editUnitId=id;
+
+    document.getElementById("unitCode").value=item.code;
+
+    document.getElementById("unitName").value=item.name;
+
+    document.getElementById("unitStatus").value=item.status;
+
+    document.getElementById("btnSaveUnit").innerHTML=
+
+    '<i class="bi bi-pencil"></i> Update';
+
+    new bootstrap.Modal(
+
+        document.getElementById("unitModal")
+
+    ).show();
+
+}
+
+function saveUnit(){
+
+    const code=document.getElementById("unitCode").value.trim();
+
+    const name=document.getElementById("unitName").value.trim();
+
+    const status=document.getElementById("unitStatus").value;
+
+    if(code==""||name==""){
+
+        showToast(
+
+            "warning",
+
+            "Validasi",
+
+            "Kode dan Nama Unit wajib diisi."
+
+        );
+
+        return;
+
+    }
+
+    const modal=bootstrap.Modal.getInstance(
+
+        document.getElementById("unitModal")
+
+    );
+
+    if(editUnitId==""){
+
+        google.script.run
+
+        .withSuccessHandler(function(){
+
+            modal.hide();
+
+            loadUnit();
+
+            showToast(
+
+                "success",
+
+                "Berhasil",
+
+                "Unit berhasil disimpan."
+
+            );
+
+        })
+
+        .saveUnit(
+
+            code,
+
+            name,
+
+            status
+
+        );
+
+    }
+
+    else{
+
+        google.script.run
+
+        .withSuccessHandler(function(){
+
+            modal.hide();
+
+            loadUnit();
+
+            showToast(
+
+                "success",
+
+                "Berhasil",
+
+                "Unit berhasil diupdate."
+
+            );
+
+        })
+
+        .updateUnit(
+
+            editUnitId,
+
+            code,
+
+            name,
+
+            status
+
+        );
+
+    }
+
+}
+
+function deleteUnit(id){
+
+    if(!confirm("Hapus Unit ini ?")) return;
+
+    google.script.run
+
+    .withSuccessHandler(function(){
+
+        loadUnit();
+
+        showToast(
+
+            "success",
+
+            "Berhasil",
+
+            "Unit berhasil dihapus."
+
+        );
+
+    })
+
+    .deleteUnit(id);
+
+}
+
+function searchUnit(){
+
+    const key=document
+
+    .getElementById("searchUnit")
+
+    .value
+
+    .toLowerCase();
+
+    renderUnit(
+
+        unitData.filter(function(r){
+
+            return(
+
+                r.code.toLowerCase().includes(key)||
+
+                r.name.toLowerCase().includes(key)
+
+            );
+
+        })
+
+    );
+
+}
+
+/* =====================================
+   SPAREPART
+===================================== */
+
+sparepartImageBase64 = "";
+sparepartOldImage = "";
+
+function openSparepart() {
+
+    currentPage="Sparepart";
+
+    showSkeleton();
+
+    google.script.run
+
+    .withSuccessHandler(function(html){
+
+        document.getElementById("mainContent").innerHTML=html;
+
+        document.getElementById("pageTitle").innerHTML="Master Data";
+
+        document.getElementById("pageSubTitle").innerHTML="Kelola Data Sparepart";
+
+        loadMasterSparepart();
+
+    })
+
+    .loadPage("Sparepart");
+
+}
+
+function loadMasterSparepart(){
+
+    google.script.run
+
+    .withSuccessHandler(function(cat){
+
+        fillCategory(cat);
+
+    })
+
+    .getCategory();
+
+    google.script.run
+
+    .withSuccessHandler(function(sup){
+
+        fillSupplier(sup);
+
+    })
+
+    .getSupplier();
+
+    google.script.run
+
+    .withSuccessHandler(function(loc){
+
+        fillLocation(loc);
+
+    })
+
+    .getLocation();
+
+    google.script.run
+
+    .withSuccessHandler(function(unit){
+
+        fillUnit(unit);
+
+    })
+
+    .getUnit();
+
+    loadSparepart();
+
+}
+
+function loadSparepart(){
+
+    google.script.run
+
+    .withSuccessHandler(function(data){
+
+        sparepartData=data;
+
+        renderSparepart(data);
+
+    })
+
+    .getSparepart();
+
+}
+
+function renderSparepart(data){
+
+    let html="";
+
+    data.forEach(function(item){
+
+        let badge="bg-success";
+
+        if(item.status!="ACTIVE"){
+
+            badge="bg-danger";
+
+        }
+
+        let diffColor="text-success";
+
+        if(Number(item.difference)>0){
+
+            diffColor="text-primary";
+
+        }
+
+        if(Number(item.difference)<0){
+
+            diffColor="text-danger";
+
+        }
+
+        html+=`
+
+<tr>
+
+<td>
+
+<img
+
+src="${getImage(item.image)}"
+
+class="rounded"
+
+style="width:45px;height:45px;object-fit:cover;cursor:pointer"
+
+onclick="previewSparepartImage('${getImage(item.image)}')">
+
+</td>
+
+<td>${item.code}</td>
+
+<td>${item.name}</td>
+
+<td>${item.category}</td>
+
+<td>${item.supplier}</td>
+
+<td>${item.location}</td>
+
+<td>${item.unit}</td>
+
+<td class="text-center">${item.systemStock}</td>
+
+<td class="text-center">${item.whStock}</td>
+
+<td class="text-center fw-bold ${diffColor}">
+
+${item.difference}
+
+</td>
+
+<td class="text-center">${item.minimum}</td>
+
+<td>
+
+<span class="badge ${badge}">
+
+${item.status}
+
+</span>
+
+</td>
+
+<td class="text-center">
+
+<button
+
+class="btn btn-warning btn-sm"
+
+onclick="editSparepart('${item.id}')">
+
+<i class="bi bi-pencil"></i>
+
+</button>
+
+<button
+
+class="btn btn-danger btn-sm"
+
+onclick="deleteSparepart('${item.id}')">
+
+<i class="bi bi-trash"></i>
+
+</button>
+
+</td>
+
+</tr>
+
+`;
+
+    });
+
+    document.getElementById("sparepartBody").innerHTML=html;
+
+}
+
+/* =====================================================
+   DROPDOWN MASTER
+===================================================== */
+
+function fillCategory(data){
+
+    categoryData=data;
+
+    let html='<option value="">Pilih Category</option>';
+
+    data.forEach(function(r){
+
+        if(r.status=="ACTIVE"){
+
+            html+=`<option value="${r.name}">${r.name}</option>`;
+
+        }
+
+    });
+
+    document.getElementById("spCategory").innerHTML=html;
+
+    const filter=document.getElementById("filterCategory");
+
+    if(filter){
+
+        filter.innerHTML='<option value="">Semua Category</option>'+html.replace('<option value="">Pilih Category</option>','');
+
+    }
+
+}
+
+function fillSupplier(data){
+
+    supplierData=data;
+
+    let html='<option value="">Pilih Supplier</option>';
+
+    data.forEach(function(r){
+
+        if(r.status=="ACTIVE"){
+
+            html+=`<option value="${r.name}">${r.name}</option>`;
+
+        }
+
+    });
+
+    document.getElementById("spSupplier").innerHTML=html;
+
+    const filter=document.getElementById("filterSupplier");
+
+    if(filter){
+
+        filter.innerHTML='<option value="">Semua Supplier</option>'+html.replace('<option value="">Pilih Supplier</option>','');
+
+    }
+
+}
+
+function fillLocation(data){
+
+    locationData=data;
+
+    let html='<option value="">Pilih Location</option>';
+
+    data.forEach(function(r){
+
+        if(r.status=="ACTIVE"){
+
+            html+=`<option value="${r.name}">${r.name}</option>`;
+
+        }
+
+    });
+
+    document.getElementById("spLocation").innerHTML=html;
+
+}
+
+function fillUnit(data){
+
+    unitData=data;
+
+    let html='<option value="">Pilih Unit</option>';
+
+    data.forEach(function(r){
+
+        if(r.status=="ACTIVE"){
+
+            html+=`<option value="${r.name}">${r.name}</option>`;
+
+        }
+
+    });
+
+    document.getElementById("spUnit").innerHTML=html;
+
+}
+
+/* =====================================================
+   ADD SPAREPART
+===================================================== */
+
+function addSparepart(){
+
+    editSparepartId="";
+
+    sparepartOldImage="";
+
+    sparepartImageBase64="";
+
+    document.getElementById("spCode").value="";
+
+    document.getElementById("spName").value="";
+
+    document.getElementById("spCategory").value="";
+
+    document.getElementById("spSupplier").value="";
+
+    document.getElementById("spLocation").value="";
+
+    document.getElementById("spUnit").value="";
+
+    document.getElementById("spSystem").value=0;
+
+    document.getElementById("spWH").value=0;
+
+    document.getElementById("spMinimum").value=0;
+
+    document.getElementById("spDifference").value=0;
+
+    document.getElementById("spStatus").value="ACTIVE";
+
+    document.getElementById("spRemark").value="";
+
+    document.getElementById("previewImage").src="https://placehold.co/250x250?text=No+Image";
+
+    document.getElementById("btnSaveSparepart").innerHTML=
+
+    '<i class="bi bi-check-circle"></i> Simpan';
+
+    new bootstrap.Modal(
+
+        document.getElementById("sparepartModal")
+
+    ).show();
+
+}
+
+/* =====================================================
+   EDIT SPAREPART
+===================================================== */
+
+function editSparepart(id){
+
+    const item=sparepartData.find(r=>String(r.id)==String(id));
+
+    if(!item) return;
+
+    editSparepartId=id;
+
+    sparepartOldImage=item.image;
+
+    sparepartImageBase64="";
+
+    document.getElementById("spCode").value=item.code;
+
+    document.getElementById("spName").value=item.name;
+
+    document.getElementById("spCategory").value=item.category;
+
+    document.getElementById("spSupplier").value=item.supplier;
+
+    document.getElementById("spLocation").value=item.location;
+
+    document.getElementById("spUnit").value=item.unit;
+
+    document.getElementById("spSystem").value=item.systemStock;
+
+    document.getElementById("spWH").value=item.whStock;
+
+    document.getElementById("spMinimum").value=item.minimum;
+
+    document.getElementById("spDifference").value=item.difference;
+
+    document.getElementById("spStatus").value=item.status;
+
+    document.getElementById("spRemark").value=item.remark;
+
+    document.getElementById("previewImage").src=getImage(item.image);
+
+    document.getElementById("btnSaveSparepart").innerHTML=
+
+    '<i class="bi bi-pencil"></i> Update';
+
+    new bootstrap.Modal(
+
+        document.getElementById("sparepartModal")
+
+    ).show();
+
+}
+
+/* =====================================================
+   IMAGE
+===================================================== */
+
+function previewImage(e){
+
+    const file=e.target.files[0];
+
+    if(!file) return;
+
+    const reader=new FileReader();
+
+    reader.onload=function(evt){
+
+        sparepartImageBase64=evt.target.result.split(",")[1];
+
+        document.getElementById("previewImage").src=evt.target.result;
+
+    };
+
+    reader.readAsDataURL(file);
+
+}
+
+function calculateDifference(){
+
+    const system=Number(document.getElementById("spSystem").value)||0;
+
+    const wh=Number(document.getElementById("spWH").value)||0;
+
+    document.getElementById("spDifference").value=wh-system;
+
+}
+
+/* =====================================================
+   SAVE SPAREPART
+===================================================== */
+
+function saveSparepart(){
+
+    const obj={
+
+        id:editSparepartId,
+
+        code:document.getElementById("spCode").value.trim(),
+
+        image:sparepartOldImage,
+
+        name:document.getElementById("spName").value.trim(),
+
+        systemStock:Number(document.getElementById("spSystem").value)||0,
+
+        whStock:Number(document.getElementById("spWH").value)||0,
+
+        unit:document.getElementById("spUnit").value,
+
+        supplier:document.getElementById("spSupplier").value,
+
+        category:document.getElementById("spCategory").value,
+
+        location:document.getElementById("spLocation").value,
+
+        minimum:Number(document.getElementById("spMinimum").value)||0,
+
+        status:document.getElementById("spStatus").value,
+
+        remark:document.getElementById("spRemark").value.trim()
+
+    };
+
+    if(obj.code=="" || obj.name==""){
+
+        showToast(
+
+            "warning",
+
+            "Validasi",
+
+            "Kode dan Nama Sparepart wajib diisi."
+
+        );
+
+        return;
+
+    }
+
+    if(sparepartImageBase64!=""){
+
+        google.script.run
+
+        .withSuccessHandler(function(fileId){
+
+            obj.image=fileId;
+
+            saveSparepartProcess(obj);
+
+        })
+
+        .uploadImage(
+
+            sparepartImageBase64,
+
+            obj.code+".jpg"
+
+        );
+
+    }else{
+
+        saveSparepartProcess(obj);
+
+    }
+
+}
+
+function saveSparepartProcess(obj){
+
+    const modal=bootstrap.Modal.getInstance(
+
+        document.getElementById("sparepartModal")
+
+    );
+
+    if(editSparepartId==""){
+
+        google.script.run
+
+        .withSuccessHandler(function(){
+
+            modal.hide();
+
+            loadSparepart();
+
+            showToast(
+
+                "success",
+
+                "Berhasil",
+
+                "Sparepart berhasil disimpan."
+
+            );
+
+        })
+
+        .saveSparepart(obj);
+
+    }
+
+    else{
+
+        google.script.run
+
+        .withSuccessHandler(function(){
+
+            modal.hide();
+
+            loadSparepart();
+
+            showToast(
+
+                "success",
+
+                "Berhasil",
+
+                "Sparepart berhasil diupdate."
+
+            );
+
+        })
+
+        .updateSparepart(obj);
+
+    }
+
+}
+
+/* =====================================================
+   DELETE SPAREPART
+===================================================== */
+
+function deleteSparepart(id){
+
+    if(!confirm("Yakin ingin menghapus Sparepart ini ?")) return;
+
+    google.script.run
+
+    .withSuccessHandler(function(){
+
+        loadSparepart();
+
+        showToast(
+
+            "success",
+
+            "Berhasil",
+
+            "Sparepart berhasil dihapus."
+
+        );
+
+    })
+
+    .deleteSparepart(id);
+
+}
+
+/* =====================================================
+   SEARCH
+===================================================== */
+
+function searchSparepart(){
+
+    filterSparepart();
+
+}
+
+/* =====================================================
+   FILTER
+===================================================== */
+
+function filterSparepart(){
+
+    const keyword=document
+
+        .getElementById("searchSparepart")
+
+        .value
+
+        .toLowerCase();
+
+    const category=document
+
+        .getElementById("filterCategory")
+
+        .value;
+
+    const supplier=document
+
+        .getElementById("filterSupplier")
+
+        .value;
+
+    const status=document
+
+        .getElementById("filterStatus")
+
+        .value;
+
+    const result=sparepartData.filter(function(r){
+
+        const matchKeyword=
+
+            r.code.toLowerCase().includes(keyword) ||
+
+            r.name.toLowerCase().includes(keyword);
+
+        const matchCategory=
+
+            category=="" ||
+
+            r.category==category;
+
+        const matchSupplier=
+
+            supplier=="" ||
+
+            r.supplier==supplier;
+
+        const matchStatus=
+
+            status=="" ||
+
+            r.status==status;
+
+        return(
+
+            matchKeyword &&
+
+            matchCategory &&
+
+            matchSupplier &&
+
+            matchStatus
+
+        );
+
+    });
+
+    renderSparepart(result);
+
+}
+
+/* =====================================================
+   PREVIEW IMAGE
+===================================================== */
+
+function previewSparepartImage(url){
+
+    document.getElementById("previewImage").src=url;
+
+    new bootstrap.Modal(
+
+        document.getElementById("previewImageModal")
+
+    ).show();
+
+}
+
+function getImage(fileId){
+
+    if(fileId=="" || fileId==null){
+
+        return "https://placehold.co/250x250?text=No+Image";
+
+    }
+
+    return "https://drive.google.com/thumbnail?id="+fileId;
+
+}
+
+/* =====================================================
+   REFRESH MASTER
+===================================================== */
+
+function refreshMaster(){
+
+    switch(currentPage){
+
+        case "Dashboard":
+
+            loadDashboard();
+
+            break;
+
+        case "Category":
+
+            loadCategory();
+
+            break;
+
+        case "Supplier":
+
+            loadSupplier();
+
+            break;
+
+        case "Location":
+
+            loadLocation();
+
+            break;
+
+        case "Unit":
+
+            loadUnit();
+
+            break;
+
+        case "Sparepart":
+
+            loadSparepart();
+
+            break;
+
+    }
+
+}
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+function logout(){
+
+    if(!confirm("Yakin ingin Logout ?")) return;
+
+    google.script.run
+
+    .withSuccessHandler(function(){
+
+        location.reload();
+
+    })
+
+    .logoutUser();
+
+}

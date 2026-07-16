@@ -1,0 +1,459 @@
+/*************************************************
+ * DATABASE HELPER
+ *************************************************/
+
+function getSheet(sheetName){
+
+  const sh = DB.getSheetByName(sheetName);
+
+  if(!sh){
+
+    throw new Error("Sheet tidak ditemukan : " + sheetName);
+
+  }
+
+  return sh;
+
+}
+
+function getHeader(sheetName){
+
+  const sh = getSheet(sheetName);
+
+  return sh.getRange(1,1,1,sh.getLastColumn()).getValues()[0];
+
+}
+
+function getAll(sheetName){
+
+  const sh = getSheet(sheetName);
+
+  const values = sh.getDataRange().getValues();
+
+  if(values.length<=1){
+
+    return [];
+
+  }
+
+  const header = values.shift();
+
+  return values.map(function(row){
+
+    let obj = {};
+
+    header.forEach(function(col,i){
+
+      obj[col]=row[i];
+
+    });
+
+    return obj;
+
+  });
+
+}
+
+function getById(sheetName,id){
+
+  const data = getAll(sheetName);
+
+  return data.find(function(r){
+
+    return String(r.ID)==String(id);
+
+  }) || null;
+
+}
+
+function insert(sheetName,obj){
+
+  const sh = getSheet(sheetName);
+
+  const header = getHeader(sheetName);
+
+  const row = [];
+
+  header.forEach(function(col){
+
+    row.push(
+
+      obj[col]!==undefined
+
+      ? obj[col]
+
+      : ""
+
+    );
+
+  });
+
+  sh.appendRow(row);
+
+  return true;
+
+}
+
+function update(sheetName,id,obj){
+
+  const sh = getSheet(sheetName);
+
+  const values = sh.getDataRange().getValues();
+
+  const header = values[0];
+
+  for(let i=1;i<values.length;i++){
+
+    if(String(values[i][0])==String(id)){
+
+      header.forEach(function(col,c){
+
+        if(obj[col]!==undefined){
+
+          sh.getRange(i+1,c+1).setValue(obj[col]);
+
+        }
+
+      });
+
+      return true;
+
+    }
+
+  }
+
+  return false;
+
+}
+
+function remove(sheetName,id){
+
+  const sh = getSheet(sheetName);
+
+  const values = sh.getDataRange().getValues();
+
+  for(let i=1;i<values.length;i++){
+
+    if(String(values[i][0])==String(id)){
+
+      sh.deleteRow(i+1);
+
+      return true;
+
+    }
+
+  }
+
+  return false;
+
+}
+
+function generateId(sheetName){
+
+  const sh = getSheet(sheetName);
+
+  return sh.getLastRow();
+
+}
+
+/*************************************************
+ * DATABASE UTILITIES
+ *************************************************/
+
+function exists(sheetName, field, value){
+
+  const data = getAll(sheetName);
+
+  return data.some(function(r){
+
+    return String(r[field]).trim().toUpperCase() ==
+           String(value).trim().toUpperCase();
+
+  });
+
+}
+
+function findOne(sheetName, field, value){
+
+  const data = getAll(sheetName);
+
+  return data.find(function(r){
+
+    return String(r[field]).trim().toUpperCase() ==
+           String(value).trim().toUpperCase();
+
+  }) || null;
+
+}
+
+function search(sheetName, keyword){
+
+  keyword = String(keyword).toLowerCase();
+
+  const data = getAll(sheetName);
+
+  return data.filter(function(row){
+
+    return JSON.stringify(row)
+      .toLowerCase()
+      .indexOf(keyword) > -1;
+
+  });
+
+}
+
+function getNextId(sheetName){
+
+  const sh = getSheet(sheetName);
+
+  if(sh.getLastRow() <= 1){
+
+    return 1;
+
+  }
+
+  const ids = sh
+    .getRange(2,1,sh.getLastRow()-1,1)
+    .getValues()
+    .flat()
+    .map(Number);
+
+  return Math.max.apply(null, ids) + 1;
+
+}
+
+function response(success,message,data){
+
+  return {
+
+    success: success,
+
+    message: message || "",
+
+    data: data || null
+
+  };
+
+}
+
+function now(){
+
+  return Utilities.formatDate(
+
+    new Date(),
+
+    Session.getScriptTimeZone(),
+
+    "yyyy-MM-dd HH:mm:ss"
+
+  );
+
+}
+
+function today(){
+
+  return Utilities.formatDate(
+
+    new Date(),
+
+    Session.getScriptTimeZone(),
+
+    "yyyy-MM-dd"
+
+  );
+
+}
+
+function randomCode(prefix){
+
+  return prefix +
+
+         Utilities.getUuid()
+
+         .replace(/-/g,"")
+
+         .substring(0,8)
+
+         .toUpperCase();
+
+}
+
+/*************************************************
+ * FILE / IMAGE HELPER
+ *************************************************/
+
+function uploadImage(base64, fileName){
+
+  try{
+
+    if(!base64) return "";
+
+    if(base64.indexOf(",")>-1){
+
+      base64 = base64.split(",")[1];
+
+    }
+
+    const folder = DriveApp.getFolderById(FOLDER_IMAGE);
+
+    const blob = Utilities.newBlob(
+
+      Utilities.base64Decode(base64)
+
+    );
+
+    blob.setName(fileName);
+
+    const file = folder.createFile(blob);
+
+    file.setSharing(
+
+      DriveApp.Access.ANYONE_WITH_LINK,
+
+      DriveApp.Permission.VIEW
+
+    );
+
+    return file.getId();
+
+  }catch(err){
+
+    Logger.log(err);
+
+    return "";
+
+  }
+
+}
+
+function deleteImage(fileId){
+
+  try{
+
+    if(!fileId) return true;
+
+    DriveApp.getFileById(fileId).setTrashed(true);
+
+    return true;
+
+  }catch(err){
+
+    Logger.log(err);
+
+    return false;
+
+  }
+
+}
+
+function getImageUrl(fileId){
+
+  if(!fileId){
+
+    return "";
+
+  }
+
+  return "https://drive.google.com/thumbnail?id="+fileId;
+
+}
+
+/*************************************************
+ * NUMBER
+ *************************************************/
+
+function toNumber(value){
+
+  if(value==="" || value===null){
+
+    return 0;
+
+  }
+
+  return Number(value)||0;
+
+}
+
+/*************************************************
+ * STRING
+ *************************************************/
+
+function trim(value){
+
+  return String(value||"").trim();
+
+}
+
+function upper(value){
+
+  return trim(value).toUpperCase();
+
+}
+
+function lower(value){
+
+  return trim(value).toLowerCase();
+
+}
+
+/*************************************************
+ * VALIDATION
+ *************************************************/
+
+function isEmpty(value){
+
+  return trim(value)==="";
+
+}
+
+function required(value,message){
+
+  if(isEmpty(value)){
+
+    throw new Error(message);
+
+  }
+
+}
+
+/*************************************************
+ * LOG
+ *************************************************/
+
+function writeLog(module,action,user){
+
+  try{
+
+    const sh = DB.getSheetByName(SHEET.LOG);
+
+    if(!sh) return;
+
+    sh.appendRow([
+
+      new Date(),
+
+      module,
+
+      action,
+
+      user || ""
+
+    ]);
+
+  }catch(err){
+
+    Logger.log(err);
+
+  }
+
+}
+
+/*************************************************
+ * TEST
+ *************************************************/
+
+function testDatabase(){
+
+  Logger.log(getAll(SHEET.CATEGORY));
+
+}

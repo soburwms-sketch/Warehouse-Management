@@ -1,0 +1,251 @@
+<div class="page-card">
+
+    <!-- ============================= -->
+    <!-- HEADER -->
+    <!-- ============================= -->
+
+    <div class="page-header">
+
+        <div class="page-title">
+
+            <h2>
+
+                <i class="bi bi-tags-fill text-primary"></i>
+
+                Master Category
+
+            </h2>
+
+            <p>
+
+                Kelola kategori sparepart warehouse.
+
+            </p>
+
+        </div>
+
+        <button
+
+            class="btn btn-primary-custom"
+
+            onclick="addCategory()">
+
+            <i class="bi bi-plus-circle"></i>
+
+            Tambah Category
+
+        </button>
+
+    </div>
+
+    <!-- ============================= -->
+    <!-- SEARCH -->
+    <!-- ============================= -->
+
+    <div class="row mb-3">
+
+        <div class="col-md-4">
+
+            <div class="search-box">
+
+                <i class="bi bi-search"></i>
+
+                <input
+
+                    id="searchCategory"
+
+                    class="form-control"
+
+                    placeholder="Cari kode / nama..."
+
+                    onkeyup="searchCategory()">
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ============================= -->
+    <!-- TABLE -->
+    <!-- ============================= -->
+
+    <div class="table-card">
+
+        <table class="table table-hover align-middle">
+
+            <thead>
+
+                <tr>
+
+                    <th width="80">ID</th>
+
+                    <th width="180">Kode</th>
+
+                    <th>Nama Category</th>
+
+                    <th width="140">Status</th>
+
+                    <th width="120" class="text-center">
+
+                        Aksi
+
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="categoryBody">
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<!-- ====================================================== -->
+<!-- MODAL CATEGORY -->
+<!-- ====================================================== -->
+
+<div
+
+class="modal fade"
+
+id="categoryModal"
+
+tabindex="-1">
+
+<div class="modal-dialog">
+
+<div class="modal-content">
+
+<div class="modal-header">
+
+<h5 class="modal-title">
+
+<i class="bi bi-tags-fill"></i>
+
+Category
+
+</h5>
+
+<button
+
+class="btn-close"
+
+data-bs-dismiss="modal">
+
+</button>
+
+</div>
+
+<div class="modal-body">
+
+<div class="mb-3">
+
+<label class="form-label">
+
+Kode Category
+
+</label>
+
+<input
+
+id="catCode"
+
+class="form-control"
+
+placeholder="CAT001">
+
+</div>
+
+<div class="mb-3">
+
+<label class="form-label">
+
+Nama Category
+
+</label>
+
+<input
+
+id="catName"
+
+class="form-control"
+
+placeholder="Mechanical">
+
+</div>
+
+<div class="mb-3">
+
+<label class="form-label">
+
+Status
+
+</label>
+
+<select
+
+id="catStatus"
+
+class="form-select">
+
+<option value="ACTIVE">
+
+ACTIVE
+
+</option>
+
+<option value="NON ACTIVE">
+
+NON ACTIVE
+
+</option>
+
+</select>
+
+</div>
+
+</div>
+
+<div class="modal-footer">
+
+<button
+
+class="btn btn-secondary"
+
+data-bs-dismiss="modal">
+
+Batal
+
+</button>
+
+<button
+
+id="btnSaveCategory"
+
+class="btn btn-primary"
+
+onclick="saveCategory()">
+
+<i class="bi bi-check-circle"></i>
+
+<span>
+
+Simpan
+
+</span>
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</div>

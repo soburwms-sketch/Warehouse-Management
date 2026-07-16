@@ -1,0 +1,29 @@
+/* =========================================================
+   VERSION
+=========================================================*/
+
+const APP_NAME="Warehouse Management System";
+
+const APP_VERSION="1.0.0";
+
+const APP_AUTHOR="Sobur WMS";
+
+const APP_BUILD="2026.07";
+
+function getVersion(){
+
+  return{
+
+    app:APP_NAME,
+
+    version:APP_VERSION,
+
+    author:APP_AUTHOR,
+
+    build:APP_BUILD,
+
+    server:new Date()
+
+  };
+
+}

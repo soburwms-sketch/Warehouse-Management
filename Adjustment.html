@@ -1,0 +1,271 @@
+<div class="page-card">
+
+    <div class="page-header">
+
+        <div class="page-title">
+
+            <h2>
+
+                <i class="bi bi-arrow-repeat text-warning"></i>
+
+                Stock Adjustment
+
+            </h2>
+
+            <p>
+
+                Penyesuaian stok Warehouse.
+
+            </p>
+
+        </div>
+
+        <button
+            class="btn btn-primary-custom"
+            onclick="addAdjustment()">
+
+            <i class="bi bi-plus-circle"></i>
+
+            Adjustment Baru
+
+        </button>
+
+    </div>
+
+    <div class="row mb-3">
+
+        <div class="col-md-4">
+
+            <div class="search-box">
+
+                <i class="bi bi-search"></i>
+
+                <input
+
+                    id="searchAdjustment"
+
+                    class="form-control"
+
+                    placeholder="Cari Sparepart..."
+
+                    onkeyup="searchAdjustment()">
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="table-card">
+
+        <table class="table table-hover align-middle">
+
+            <thead>
+
+                <tr>
+
+                    <th>Tanggal</th>
+
+                    <th>Kode</th>
+
+                    <th>Nama Sparepart</th>
+
+                    <th class="text-center">System</th>
+
+                    <th class="text-center">WH</th>
+
+                    <th class="text-center">Adjustment</th>
+
+                    <th>Remark</th>
+
+                    <th>User</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="adjustmentBody">
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<!-- ========================================= -->
+<!-- MODAL -->
+<!-- ========================================= -->
+
+<div class="modal fade" id="adjustmentModal">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5>
+
+                    Stock Adjustment
+
+                </h5>
+
+                <button
+
+                    class="btn-close"
+
+                    data-bs-dismiss="modal">
+
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+
+                        <label>Sparepart</label>
+
+                        <select
+
+                            id="adjSparepart"
+
+                            class="form-select">
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+
+                        <label>System Stock</label>
+
+                        <input
+
+                            id="adjSystem"
+
+                            class="form-control"
+
+                            readonly>
+
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+
+                        <label>WH Stock</label>
+
+                        <input
+
+                            id="adjWH"
+
+                            class="form-control"
+
+                            readonly>
+
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+
+                        <label>Adjustment</label>
+
+                        <input
+
+                            id="adjQty"
+
+                            type="number"
+
+                            class="form-control"
+
+                            value="0">
+
+                    </div>
+
+                    <div class="col-md-8 mb-3">
+
+                        <label>Remark</label>
+
+                        <input
+
+                            id="adjRemark"
+
+                            class="form-control">
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button
+
+                    class="btn btn-secondary"
+
+                    data-bs-dismiss="modal">
+
+                    Batal
+
+                </button>
+
+                <button
+
+                    class="btn btn-primary"
+
+                    onclick="saveAdjustment()">
+
+                    Simpan
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+function addAdjustment(){
+
+    new bootstrap.Modal(
+
+        document.getElementById("adjustmentModal")
+
+    ).show();
+
+}
+
+function saveAdjustment(){
+
+    showToast(
+
+        "success",
+
+        "Berhasil",
+
+        "Stock Adjustment berhasil disimpan."
+
+    );
+
+    bootstrap.Modal.getInstance(
+
+        document.getElementById("adjustmentModal")
+
+    ).hide();
+
+}
+
+function searchAdjustment(){
+
+    // nanti terhubung ke GAS
+
+}
+
+</script>

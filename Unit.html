@@ -1,0 +1,251 @@
+<div class="page-card">
+
+    <!-- ============================= -->
+    <!-- HEADER -->
+    <!-- ============================= -->
+
+    <div class="page-header">
+
+        <div class="page-title">
+
+            <h2>
+
+                <i class="bi bi-rulers text-primary"></i>
+
+                Master Unit
+
+            </h2>
+
+            <p>
+
+                Kelola data satuan sparepart.
+
+            </p>
+
+        </div>
+
+        <button
+
+            class="btn btn-primary-custom"
+
+            onclick="addUnit()">
+
+            <i class="bi bi-plus-circle"></i>
+
+            Tambah Unit
+
+        </button>
+
+    </div>
+
+    <!-- ============================= -->
+    <!-- SEARCH -->
+    <!-- ============================= -->
+
+    <div class="row mb-3">
+
+        <div class="col-md-4">
+
+            <div class="search-box">
+
+                <i class="bi bi-search"></i>
+
+                <input
+
+                    id="searchUnit"
+
+                    class="form-control"
+
+                    placeholder="Cari Unit..."
+
+                    onkeyup="searchUnit()">
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ============================= -->
+    <!-- TABLE -->
+    <!-- ============================= -->
+
+    <div class="table-card">
+
+        <table class="table table-hover align-middle">
+
+            <thead>
+
+                <tr>
+
+                    <th width="70">ID</th>
+
+                    <th width="180">Kode</th>
+
+                    <th>Nama Unit</th>
+
+                    <th width="120">Status</th>
+
+                    <th width="120" class="text-center">
+
+                        Aksi
+
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="unitBody">
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<!-- ========================================= -->
+<!-- MODAL UNIT -->
+<!-- ========================================= -->
+
+<div
+
+class="modal fade"
+
+id="unitModal"
+
+tabindex="-1">
+
+<div class="modal-dialog">
+
+<div class="modal-content">
+
+<div class="modal-header">
+
+<h5 class="modal-title">
+
+<i class="bi bi-rulers"></i>
+
+Master Unit
+
+</h5>
+
+<button
+
+class="btn-close"
+
+data-bs-dismiss="modal">
+
+</button>
+
+</div>
+
+<div class="modal-body">
+
+<div class="mb-3">
+
+<label>
+
+Kode Unit
+
+</label>
+
+<input
+
+id="unitCode"
+
+class="form-control"
+
+placeholder="PCS">
+
+</div>
+
+<div class="mb-3">
+
+<label>
+
+Nama Unit
+
+</label>
+
+<input
+
+id="unitName"
+
+class="form-control"
+
+placeholder="Pieces">
+
+</div>
+
+<div class="mb-3">
+
+<label>
+
+Status
+
+</label>
+
+<select
+
+id="unitStatus"
+
+class="form-select">
+
+<option value="ACTIVE">
+
+ACTIVE
+
+</option>
+
+<option value="NON ACTIVE">
+
+NON ACTIVE
+
+</option>
+
+</select>
+
+</div>
+
+</div>
+
+<div class="modal-footer">
+
+<button
+
+class="btn btn-secondary"
+
+data-bs-dismiss="modal">
+
+Batal
+
+</button>
+
+<button
+
+id="btnSaveUnit"
+
+class="btn btn-primary"
+
+onclick="saveUnit()">
+
+<i class="bi bi-check-circle"></i>
+
+<span>
+
+Simpan
+
+</span>
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</div>

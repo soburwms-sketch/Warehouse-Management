@@ -1,0 +1,138 @@
+/* =========================================================
+   LOGGER
+   Warehouse Management System
+=========================================================*/
+
+/* =========================================================
+   WRITE LOG
+=========================================================*/
+
+function saveLog(module,action,description){
+
+  try{
+
+    const sh=getSheet(SHEET_LOG);
+
+    sh.appendRow([
+
+      Utilities.getUuid(),
+
+      new Date(),
+
+      Session.getActiveUser().getEmail(),
+
+      module,
+
+      action,
+
+      description
+
+    ]);
+
+  }catch(err){
+
+    Logger.log(err);
+
+  }
+
+}
+
+/* =========================================================
+   ERROR LOG
+=========================================================*/
+
+function saveError(module,error){
+
+  try{
+
+    const sh=getSheet(SHEET_LOG);
+
+    sh.appendRow([
+
+      Utilities.getUuid(),
+
+      new Date(),
+
+      Session.getActiveUser().getEmail(),
+
+      module,
+
+      "ERROR",
+
+      String(error)
+
+    ]);
+
+  }catch(e){
+
+    Logger.log(e);
+
+  }
+
+}
+
+/* =========================================================
+   GET LOG
+=========================================================*/
+
+function getLog(){
+
+  const sh=getSheet(SHEET_LOG);
+
+  const data=sh.getDataRange().getValues();
+
+  if(data.length<=1) return [];
+
+  const result=[];
+
+  for(let i=1;i<data.length;i++){
+
+    result.push({
+
+      id:data[i][0],
+
+      datetime:data[i][1],
+
+      user:data[i][2],
+
+      module:data[i][3],
+
+      action:data[i][4],
+
+      description:data[i][5]
+
+    });
+
+  }
+
+  return result;
+
+}
+
+/* =========================================================
+   CLEAR LOG
+=========================================================*/
+
+function clearLog(){
+
+  const sh=getSheet(SHEET_LOG);
+
+  if(sh.getLastRow()>1){
+
+    sh.getRange(
+
+      2,
+
+      1,
+
+      sh.getLastRow()-1,
+
+      sh.getLastColumn()
+
+    ).clearContent();
+
+  }
+
+  return true;
+
+}

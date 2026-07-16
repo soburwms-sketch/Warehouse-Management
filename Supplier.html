@@ -1,0 +1,319 @@
+<div class="page-card">
+
+    <!-- ============================= -->
+    <!-- HEADER -->
+    <!-- ============================= -->
+
+    <div class="page-header">
+
+        <div class="page-title">
+
+            <h2>
+
+                <i class="bi bi-truck text-primary"></i>
+
+                Master Supplier
+
+            </h2>
+
+            <p>
+
+                Kelola data supplier sparepart.
+
+            </p>
+
+        </div>
+
+        <button
+
+            class="btn btn-primary-custom"
+
+            onclick="addSupplier()">
+
+            <i class="bi bi-plus-circle"></i>
+
+            Tambah Supplier
+
+        </button>
+
+    </div>
+
+    <!-- ============================= -->
+    <!-- SEARCH -->
+    <!-- ============================= -->
+
+    <div class="row mb-3">
+
+        <div class="col-md-4">
+
+            <div class="search-box">
+
+                <i class="bi bi-search"></i>
+
+                <input
+
+                    id="searchSupplier"
+
+                    class="form-control"
+
+                    placeholder="Cari supplier..."
+
+                    onkeyup="searchSupplier()">
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ============================= -->
+    <!-- TABLE -->
+    <!-- ============================= -->
+
+    <div class="table-card">
+
+        <table class="table table-hover align-middle">
+
+            <thead>
+
+                <tr>
+
+                    <th width="70">ID</th>
+
+                    <th width="130">Kode</th>
+
+                    <th>Supplier</th>
+
+                    <th>PIC</th>
+
+                    <th>Phone</th>
+
+                    <th>Address</th>
+
+                    <th width="120">Status</th>
+
+                    <th width="120" class="text-center">
+
+                        Aksi
+
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="supplierBody">
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<!-- ====================================================== -->
+<!-- MODAL -->
+<!-- ====================================================== -->
+
+<div
+
+class="modal fade"
+
+id="supplierModal"
+
+tabindex="-1">
+
+<div class="modal-dialog modal-lg">
+
+<div class="modal-content">
+
+<div class="modal-header">
+
+<h5 class="modal-title">
+
+<i class="bi bi-truck"></i>
+
+Supplier
+
+</h5>
+
+<button
+
+class="btn-close"
+
+data-bs-dismiss="modal">
+
+</button>
+
+</div>
+
+<div class="modal-body">
+
+<div class="row">
+
+<div class="col-md-4 mb-3">
+
+<label>
+
+Kode Supplier
+
+</label>
+
+<input
+
+id="supCode"
+
+class="form-control"
+
+placeholder="SUP001">
+
+</div>
+
+<div class="col-md-8 mb-3">
+
+<label>
+
+Nama Supplier
+
+</label>
+
+<input
+
+id="supName"
+
+class="form-control"
+
+placeholder="PT ABC Indonesia">
+
+</div>
+
+<div class="col-md-6 mb-3">
+
+<label>
+
+PIC
+
+</label>
+
+<input
+
+id="supPIC"
+
+class="form-control"
+
+placeholder="John Doe">
+
+</div>
+
+<div class="col-md-6 mb-3">
+
+<label>
+
+Phone
+
+</label>
+
+<input
+
+id="supPhone"
+
+class="form-control"
+
+placeholder="08123456789">
+
+</div>
+
+<div class="col-md-12 mb-3">
+
+<label>
+
+Address
+
+</label>
+
+<textarea
+
+id="supAddress"
+
+rows="3"
+
+class="form-control"
+
+placeholder="Alamat Supplier">
+
+</textarea>
+
+</div>
+
+<div class="col-md-4 mb-3">
+
+<label>
+
+Status
+
+</label>
+
+<select
+
+id="supStatus"
+
+class="form-select">
+
+<option value="ACTIVE">
+
+ACTIVE
+
+</option>
+
+<option value="NON ACTIVE">
+
+NON ACTIVE
+
+</option>
+
+</select>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="modal-footer">
+
+<button
+
+class="btn btn-secondary"
+
+data-bs-dismiss="modal">
+
+Batal
+
+</button>
+
+<button
+
+id="btnSaveSupplier"
+
+class="btn btn-primary"
+
+onclick="saveSupplier()">
+
+<i class="bi bi-check-circle"></i>
+
+<span>
+
+Simpan
+
+</span>
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</div>

@@ -1,0 +1,290 @@
+/* =========================================================
+   UTILITY
+   Warehouse Management System
+=========================================================*/
+
+/* =========================================================
+   FORMAT DATE
+=========================================================*/
+
+function formatDate(date){
+
+  if(!date) return "";
+
+  return Utilities.formatDate(
+
+    new Date(date),
+
+    Session.getScriptTimeZone(),
+
+    "dd/MM/yyyy"
+
+  );
+
+}
+
+/* =========================================================
+   FORMAT DATETIME
+=========================================================*/
+
+function formatDateTime(date){
+
+  if(!date) return "";
+
+  return Utilities.formatDate(
+
+    new Date(date),
+
+    Session.getScriptTimeZone(),
+
+    "dd/MM/yyyy HH:mm:ss"
+
+  );
+
+}
+
+/* =========================================================
+   FORMAT NUMBER
+=========================================================*/
+
+function formatNumber(value){
+
+  return Number(value).toLocaleString("id-ID");
+
+}
+
+/* =========================================================
+   GENERATE UUID
+=========================================================*/
+
+function generateID(){
+
+  return Utilities.getUuid();
+
+}
+
+/* =========================================================
+   GENERATE TRANSACTION NUMBER
+=========================================================*/
+
+function generateTransNo(prefix){
+
+  const today=Utilities.formatDate(
+
+      new Date(),
+
+      Session.getScriptTimeZone(),
+
+      "yyyyMMdd"
+
+  );
+
+  const random=Math.floor(
+
+      1000+Math.random()*9000
+
+  );
+
+  return prefix+"-"+today+"-"+random;
+
+}
+
+/* =========================================================
+   GET CURRENT USER
+=========================================================*/
+
+function getCurrentUser(){
+
+  try{
+
+      return Session.getActiveUser().getEmail();
+
+  }
+
+  catch(err){
+
+      return "";
+
+  }
+
+}
+
+/* =========================================================
+   GET CURRENT DATE
+=========================================================*/
+
+function today(){
+
+  return Utilities.formatDate(
+
+      new Date(),
+
+      Session.getScriptTimeZone(),
+
+      "yyyy-MM-dd"
+
+  );
+
+}
+
+/* =========================================================
+   GET CURRENT DATETIME
+=========================================================*/
+
+function now(){
+
+  return Utilities.formatDate(
+
+      new Date(),
+
+      Session.getScriptTimeZone(),
+
+      "yyyy-MM-dd HH:mm:ss"
+
+  );
+
+}
+
+/* =========================================================
+   GOOGLE DRIVE
+=========================================================*/
+
+/**
+ * Upload file Base64 ke Google Drive
+ * @param {string} base64
+ * @param {string} fileName
+ * @return {string} File ID
+ */
+function uploadImage(base64,fileName){
+
+  if(!base64) return "";
+
+  const bytes=Utilities.base64Decode(base64);
+
+  const blob=Utilities.newBlob(bytes,MimeType.JPEG,fileName);
+
+  const file=DriveApp.createFile(blob);
+
+  file.setSharing(
+
+    DriveApp.Access.ANYONE_WITH_LINK,
+
+    DriveApp.Permission.VIEW
+
+  );
+
+  return file.getId();
+
+}
+
+/* =========================================================
+   DELETE FILE DRIVE
+=========================================================*/
+
+function deleteDriveFile(fileId){
+
+  if(!fileId) return;
+
+  try{
+
+    DriveApp.getFileById(fileId).setTrashed(true);
+
+  }
+
+  catch(err){
+
+    Logger.log(err);
+
+  }
+
+}
+
+/* =========================================================
+   GET IMAGE URL
+=========================================================*/
+
+function getImageUrl(fileId){
+
+  if(!fileId) return "";
+
+  return "https://drive.google.com/thumbnail?id="+fileId;
+
+}
+
+/* =========================================================
+   BASE64 TO BLOB
+=========================================================*/
+
+function base64ToBlob(base64,fileName,mime){
+
+  const bytes=Utilities.base64Decode(base64);
+
+  return Utilities.newBlob(
+
+      bytes,
+
+      mime || MimeType.JPEG,
+
+      fileName || "image.jpg"
+
+  );
+
+}
+
+/* =========================================================
+   VALIDASI STRING
+=========================================================*/
+
+function isEmpty(value){
+
+  return value===null ||
+
+         value===undefined ||
+
+         String(value).trim()=="";
+
+}
+
+/* =========================================================
+   VALIDASI ANGKA
+=========================================================*/
+
+function toNumber(value){
+
+  const n=Number(value);
+
+  return isNaN(n)?0:n;
+
+}
+
+/* =========================================================
+   RESPONSE JSON
+=========================================================*/
+
+function response(success,message,data){
+
+  return{
+
+    success:success,
+
+    message:message||"",
+
+    data:data||null
+
+  };
+
+}
+
+/* =========================================================
+   WRITE LOG
+=========================================================*/
+
+function writeLog(module,message){
+
+  Logger.log(
+
+    "["+module+"] "+message
+
+  );
+
+}

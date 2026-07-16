@@ -1,0 +1,147 @@
+/*************************************************
+ * WAREHOUSE MANAGEMENT SYSTEM V2
+ * MAIN
+ *************************************************/
+
+/**
+ * Web App
+ */
+function doGet() {
+  return HtmlService
+    .createTemplateFromFile("Index")
+    .evaluate()
+    .setTitle("Warehouse Management System")
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+}
+
+
+/**
+ * Include HTML
+ */
+function include(filename) {
+
+  return HtmlService
+    .createHtmlOutputFromFile(filename)
+    .getContent();
+
+}
+
+/*************************************************
+ * LOAD PAGE
+ *************************************************/
+
+function loadPage(pageName) {
+  return HtmlService
+    .createHtmlOutputFromFile(pageName)
+    .getContent();
+}
+
+/*************************************************
+ * APP VERSION
+ *************************************************/
+
+function getAppInfo() {
+
+  return {
+
+    appName: "Warehouse Management System",
+
+    version: "2.0.0",
+
+    company: "Sobur WMS",
+
+    year: new Date().getFullYear()
+
+  };
+
+}
+
+/*************************************************
+ * MENU
+ *************************************************/
+
+function getMenu() {
+
+  return [
+
+    {
+      id: "dashboard",
+      title: "Dashboard",
+      icon: "bi-speedometer2",
+      page: "DashboardHome"
+    },
+
+    {
+      id: "category",
+      title: "Category",
+      icon: "bi-tags",
+      page: "Category"
+    },
+
+    {
+      id: "supplier",
+      title: "Supplier",
+      icon: "bi-truck",
+      page: "Supplier"
+    },
+
+    {
+      id: "location",
+      title: "Location",
+      icon: "bi-geo-alt",
+      page: "Location"
+    },
+
+    {
+      id: "unit",
+      title: "Unit",
+      icon: "bi-rulers",
+      page: "Unit"
+    },
+
+    {
+      id: "sparepart",
+      title: "Sparepart",
+      icon: "bi-box-seam",
+      page: "Sparepart"
+    }
+
+  ];
+
+}
+
+/*************************************************
+ * TEST CONNECTION
+ *************************************************/
+
+function ping() {
+
+  return {
+
+    success: true,
+
+    serverTime: now(),
+
+    status: "ONLINE"
+
+  };
+
+}
+
+/*************************************************
+ * INIT APP
+ *************************************************/
+
+function initApplication() {
+
+  return {
+
+    success: true,
+
+    app: getAppInfo(),
+
+    menu: getMenu()
+
+  };
+
+}

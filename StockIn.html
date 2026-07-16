@@ -1,0 +1,305 @@
+<div class="page-card">
+
+    <div class="page-header">
+
+        <div class="page-title">
+
+            <h2>
+
+                <i class="bi bi-box-arrow-in-down text-success"></i>
+
+                Stock In
+
+            </h2>
+
+            <p>
+
+                Penerimaan Barang Masuk
+
+            </p>
+
+        </div>
+
+        <button
+            class="btn btn-primary-custom"
+            onclick="addStockIn()">
+
+            <i class="bi bi-plus-circle"></i>
+
+            Barang Masuk
+
+        </button>
+
+    </div>
+
+    <!-- FILTER -->
+
+    <div class="row mb-3">
+
+        <div class="col-md-4">
+
+            <div class="search-box">
+
+                <i class="bi bi-search"></i>
+
+                <input
+
+                    id="searchStockIn"
+
+                    class="form-control"
+
+                    placeholder="Cari Sparepart..."
+
+                    onkeyup="searchStockIn()">
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- TABLE -->
+
+    <div class="table-card">
+
+        <table class="table table-hover align-middle">
+
+            <thead>
+
+                <tr>
+
+                    <th>Tanggal</th>
+
+                    <th>No Transaksi</th>
+
+                    <th>Kode</th>
+
+                    <th>Nama Sparepart</th>
+
+                    <th>Supplier</th>
+
+                    <th class="text-center">
+
+                        Qty
+
+                    </th>
+
+                    <th>User</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="stockInBody">
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<!-- =================================================== -->
+
+<div class="modal fade" id="stockInModal">
+
+<div class="modal-dialog modal-lg modal-dialog-centered">
+
+<div class="modal-content">
+
+<div class="modal-header">
+
+<h5>
+
+<i class="bi bi-box-arrow-in-down"></i>
+
+Stock In
+
+</h5>
+
+<button
+
+class="btn-close"
+
+data-bs-dismiss="modal">
+
+</button>
+
+</div>
+
+<div class="modal-body">
+
+<div class="row">
+
+<div class="col-md-6 mb-3">
+
+<label>No Transaksi</label>
+
+<input
+
+id="inNumber"
+
+class="form-control"
+
+readonly>
+
+</div>
+
+<div class="col-md-6 mb-3">
+
+<label>Tanggal</label>
+
+<input
+
+id="inDate"
+
+type="date"
+
+class="form-control">
+
+</div>
+
+<div class="col-md-6 mb-3">
+
+<label>Sparepart</label>
+
+<select
+
+id="inSparepart"
+
+class="form-select">
+
+</select>
+
+</div>
+
+<div class="col-md-6 mb-3">
+
+<label>Supplier</label>
+
+<select
+
+id="inSupplier"
+
+class="form-select">
+
+</select>
+
+</div>
+
+<div class="col-md-4 mb-3">
+
+<label>Qty Masuk</label>
+
+<input
+
+id="inQty"
+
+type="number"
+
+class="form-control"
+
+value="1">
+
+</div>
+
+<div class="col-md-8 mb-3">
+
+<label>Remark</label>
+
+<input
+
+id="inRemark"
+
+class="form-control">
+
+</div>
+
+</div>
+
+</div>
+
+<div class="modal-footer">
+
+<button
+
+class="btn btn-secondary"
+
+data-bs-dismiss="modal">
+
+Batal
+
+</button>
+
+<button
+
+class="btn btn-success"
+
+onclick="saveStockIn()">
+
+<i class="bi bi-check-circle"></i>
+
+Simpan
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+function addStockIn(){
+
+    document.getElementById("inNumber").value=
+
+    "IN-"+new Date().getTime();
+
+    document.getElementById("inDate").value=
+
+    new Date().toISOString().split("T")[0];
+
+    document.getElementById("inQty").value=1;
+
+    document.getElementById("inRemark").value="";
+
+    new bootstrap.Modal(
+
+        document.getElementById("stockInModal")
+
+    ).show();
+
+}
+
+function saveStockIn(){
+
+    showToast(
+
+        "success",
+
+        "Berhasil",
+
+        "Stock In berhasil disimpan."
+
+    );
+
+    bootstrap.Modal.getInstance(
+
+        document.getElementById("stockInModal")
+
+    ).hide();
+
+}
+
+function searchStockIn(){
+
+    // nanti terhubung GAS
+
+}
+
+</script>

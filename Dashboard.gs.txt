@@ -1,0 +1,273 @@
+/* =========================================================
+   DASHBOARD SERVICE
+   Warehouse Management System
+=========================================================*/
+
+/* =========================================================
+   LOAD DASHBOARD
+=========================================================*/
+
+function getDashboardData(){
+
+  const sparepart=getSparepart();
+  const stockIn=getStockIn();
+  const stockOut=getStockOut();
+  const adjustment=getAdjustment();
+
+  let totalStock=0;
+  let totalValue=0;
+  let lowStock=0;
+
+  sparepart.forEach(function(item){
+
+    const qty=Number(item.whStock)||0;
+
+    totalStock+=qty;
+
+    if(qty<=Number(item.minimum)){
+      lowStock++;
+    }
+
+    if(item.price){
+      totalValue+=qty*Number(item.price);
+    }
+
+  });
+
+  return{
+
+    totalPart:sparepart.length,
+
+    totalStock:totalStock,
+
+    totalValue:totalValue,
+
+    totalStockIn:stockIn.length,
+
+    totalStockOut:stockOut.length,
+
+    totalAdjustment:adjustment.length,
+
+    lowStock:lowStock
+
+  };
+
+}
+
+function getDashboard(){
+
+  const d = getDashboardData();
+
+  return {
+
+    totalSparepart: d.totalPart,
+    totalStock: d.totalStock,
+    lowStock: d.lowStock,
+
+    // sementara isi default dulu
+    outStock: 0,
+    difference: 0,
+    pending: 0
+
+  };
+
+}
+
+/* =========================================================
+   DASHBOARD CHART
+=========================================================*/
+
+function getDashboardChart(){
+
+  const sparepart=getSparepart();
+
+  const category={};
+
+  sparepart.forEach(function(item){
+
+      if(!category[item.category]){
+
+          category[item.category]=0;
+
+      }
+
+      category[item.category]++;
+
+  });
+
+  const labels=[];
+  const values=[];
+
+  Object.keys(category).forEach(function(k){
+
+      labels.push(k);
+
+      values.push(category[k]);
+
+  });
+
+  return{
+
+      labels:labels,
+
+      values:values
+
+  };
+
+}
+
+/* =========================================================
+   MONTHLY STOCK IN CHART
+=========================================================*/
+
+function getMonthlyStockIn(){
+
+  const data=getStockIn();
+
+  const month=Array(12).fill(0);
+
+  data.forEach(function(r){
+
+    const d=new Date(r.date);
+
+    month[d.getMonth()] += Number(r.qty);
+
+  });
+
+  return month;
+
+}
+
+/* =========================================================
+   MONTHLY STOCK OUT CHART
+=========================================================*/
+
+function getMonthlyStockOut(){
+
+  const data=getStockOut();
+
+  const month=Array(12).fill(0);
+
+  data.forEach(function(r){
+
+    const d=new Date(r.date);
+
+    month[d.getMonth()] += Number(r.qty);
+
+  });
+
+  return month;
+
+}
+
+/* =========================================================
+   TOP 10 SPAREPART
+=========================================================*/
+
+function getTopSparepart(){
+
+  return getSparepart()
+
+    .sort(function(a,b){
+
+      return Number(b.whStock)-Number(a.whStock);
+
+    })
+
+    .slice(0,10);
+
+}
+
+/* =========================================================
+   LOW STOCK LIST
+=========================================================*/
+
+function getDashboardLowStock(){
+
+  return getSparepart()
+
+    .filter(function(r){
+
+      return Number(r.whStock)<=Number(r.minimum);
+
+    })
+
+    .sort(function(a,b){
+
+      return Number(a.whStock)-Number(b.whStock);
+
+    });
+
+}
+
+/* =========================================================
+   RECENT TRANSACTION
+=========================================================*/
+
+function getRecentTransaction(){
+
+  let list=[];
+
+  getStockIn().forEach(function(r){
+
+    list.push({
+
+      type:"IN",
+
+      date:r.date,
+
+      code:r.sparepart,
+
+      qty:r.qty,
+
+      user:r.user
+
+    });
+
+  });
+
+  getStockOut().forEach(function(r){
+
+    list.push({
+
+      type:"OUT",
+
+      date:r.date,
+
+      code:r.sparepart,
+
+      qty:r.qty,
+
+      user:r.user
+
+    });
+
+  });
+
+  getAdjustment().forEach(function(r){
+
+    list.push({
+
+      type:"ADJ",
+
+      date:r.date,
+
+      code:r.sparepart,
+
+      qty:r.adjustment,
+
+      user:r.user
+
+    });
+
+  });
+
+  list.sort(function(a,b){
+
+    return new Date(b.date)-new Date(a.date);
+
+  });
+
+  return list.slice(0,15);
+
+}

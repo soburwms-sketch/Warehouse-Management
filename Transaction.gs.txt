@@ -1,0 +1,428 @@
+/* =========================================================
+   TRANSACTION SERVICE
+   Warehouse Management System
+=========================================================*/
+
+/* =========================================================
+   STOCK IN
+=========================================================*/
+
+function getStockIn(){
+
+  const sh=getSheet(SHEET_STOCKIN);
+
+  const data=sh.getDataRange().getValues();
+
+  if(data.length<=1) return [];
+
+  const result=[];
+
+  for(let i=1;i<data.length;i++){
+
+    result.push({
+
+      id:data[i][0],
+
+      transNo:data[i][1],
+
+      date:data[i][2],
+
+      sparepart:data[i][3],
+
+      supplier:data[i][4],
+
+      qty:Number(data[i][5]),
+
+      remark:data[i][6],
+
+      user:data[i][7]
+
+    });
+
+  }
+
+  return result;
+
+}
+
+/* =========================================================
+   SAVE STOCK IN
+=========================================================*/
+
+function saveStockIn(obj){
+
+  const sh=getSheet(SHEET_STOCKIN);
+
+  sh.appendRow([
+
+    Utilities.getUuid(),
+
+    obj.transNo,
+
+    obj.date,
+
+    obj.sparepart,
+
+    obj.supplier,
+
+    Number(obj.qty),
+
+    obj.remark,
+
+    Session.getActiveUser().getEmail()
+
+  ]);
+
+  updateStockIn(obj.sparepart,obj.qty);
+
+  return true;
+
+}
+
+/* =========================================================
+   UPDATE STOCK SPAREPART
+=========================================================*/
+
+function updateStockIn(code,qty){
+
+  const sh=getSheet(SHEET_SPAREPART);
+
+  const data=sh.getDataRange().getValues();
+
+  for(let i=1;i<data.length;i++){
+
+    if(data[i][1]==code){
+
+      let system=Number(data[i][7]);
+
+      let wh=Number(data[i][8]);
+
+      system+=Number(qty);
+
+      wh+=Number(qty);
+
+      sh.getRange(i+1,8).setValue(system);
+
+      sh.getRange(i+1,9).setValue(wh);
+
+      sh.getRange(i+1,10).setValue(wh-system);
+
+      break;
+
+    }
+
+  }
+
+}
+
+/* =========================================================
+   DELETE STOCK IN
+=========================================================*/
+
+function deleteStockIn(id){
+
+  const sh=getSheet(SHEET_STOCKIN);
+
+  const data=sh.getDataRange().getValues();
+
+  for(let i=1;i<data.length;i++){
+
+    if(data[i][0]==id){
+
+      sh.deleteRow(i+1);
+
+      return true;
+
+    }
+
+  }
+
+  return false;
+
+}
+
+/* =========================================================
+   STOCK OUT
+=========================================================*/
+
+function getStockOut(){
+
+  const sh=getSheet(SHEET_STOCKOUT);
+
+  const data=sh.getDataRange().getValues();
+
+  if(data.length<=1) return [];
+
+  const result=[];
+
+  for(let i=1;i<data.length;i++){
+
+    result.push({
+
+      id:data[i][0],
+
+      transNo:data[i][1],
+
+      date:data[i][2],
+
+      sparepart:data[i][3],
+
+      destination:data[i][4],
+
+      qty:Number(data[i][5]),
+
+      remark:data[i][6],
+
+      user:data[i][7]
+
+    });
+
+  }
+
+  return result;
+
+}
+
+/* =========================================================
+   SAVE STOCK OUT
+=========================================================*/
+
+function saveStockOut(obj){
+
+  const sh=getSheet(SHEET_STOCKOUT);
+
+  sh.appendRow([
+
+    Utilities.getUuid(),
+
+    obj.transNo,
+
+    obj.date,
+
+    obj.sparepart,
+
+    obj.destination,
+
+    Number(obj.qty),
+
+    obj.remark,
+
+    Session.getActiveUser().getEmail()
+
+  ]);
+
+  updateStockOut(obj.sparepart,obj.qty);
+
+  return true;
+
+}
+
+/* =========================================================
+   UPDATE STOCK OUT
+=========================================================*/
+
+function updateStockOut(code,qty){
+
+  const sh=getSheet(SHEET_SPAREPART);
+
+  const data=sh.getDataRange().getValues();
+
+  for(let i=1;i<data.length;i++){
+
+    if(data[i][1]==code){
+
+      let system=Number(data[i][7]);
+
+      let wh=Number(data[i][8]);
+
+      system-=Number(qty);
+
+      wh-=Number(qty);
+
+      if(system<0) system=0;
+
+      if(wh<0) wh=0;
+
+      sh.getRange(i+1,8).setValue(system);
+
+      sh.getRange(i+1,9).setValue(wh);
+
+      sh.getRange(i+1,10).setValue(wh-system);
+
+      break;
+
+    }
+
+  }
+
+}
+
+/* =========================================================
+   DELETE STOCK OUT
+=========================================================*/
+
+function deleteStockOut(id){
+
+  const sh=getSheet(SHEET_STOCKOUT);
+
+  const data=sh.getDataRange().getValues();
+
+  for(let i=1;i<data.length;i++){
+
+    if(data[i][0]==id){
+
+      sh.deleteRow(i+1);
+
+      return true;
+
+    }
+
+  }
+
+  return false;
+
+}
+
+/* =========================================================
+   STOCK ADJUSTMENT
+=========================================================*/
+
+function getAdjustment(){
+
+  const sh=getSheet(SHEET_ADJUSTMENT);
+
+  const data=sh.getDataRange().getValues();
+
+  if(data.length<=1) return [];
+
+  const result=[];
+
+  for(let i=1;i<data.length;i++){
+
+    result.push({
+
+      id:data[i][0],
+
+      date:data[i][1],
+
+      sparepart:data[i][2],
+
+      systemStock:Number(data[i][3]),
+
+      whStock:Number(data[i][4]),
+
+      adjustment:Number(data[i][5]),
+
+      remark:data[i][6],
+
+      user:data[i][7]
+
+    });
+
+  }
+
+  return result;
+
+}
+
+/* =========================================================
+   SAVE ADJUSTMENT
+=========================================================*/
+
+function saveAdjustment(obj){
+
+  const sh=getSheet(SHEET_ADJUSTMENT);
+
+  sh.appendRow([
+
+    Utilities.getUuid(),
+
+    obj.date,
+
+    obj.sparepart,
+
+    Number(obj.systemStock),
+
+    Number(obj.whStock),
+
+    Number(obj.adjustment),
+
+    obj.remark,
+
+    Session.getActiveUser().getEmail()
+
+  ]);
+
+  updateAdjustmentStock(
+
+    obj.sparepart,
+
+    obj.adjustment
+
+  );
+
+  return true;
+
+}
+
+/* =========================================================
+   UPDATE STOCK AFTER ADJUSTMENT
+=========================================================*/
+
+function updateAdjustmentStock(code,adjustment){
+
+  const sh=getSheet(SHEET_SPAREPART);
+
+  const data=sh.getDataRange().getValues();
+
+  for(let i=1;i<data.length;i++){
+
+    if(data[i][1]==code){
+
+      let system=Number(data[i][7]);
+
+      let wh=Number(data[i][8]);
+
+      // Adjustment menambah / mengurangi WH Stock
+      wh = wh + Number(adjustment);
+
+      if(wh < 0) wh = 0;
+
+      const diff = wh - system;
+
+      sh.getRange(i+1,9).setValue(wh);      // WH Stock
+      sh.getRange(i+1,10).setValue(diff);   // Difference
+
+      break;
+
+    }
+
+  }
+
+}
+
+/* =========================================================
+   DELETE ADJUSTMENT
+=========================================================*/
+
+function deleteAdjustment(id){
+
+  const sh=getSheet(SHEET_ADJUSTMENT);
+
+  const data=sh.getDataRange().getValues();
+
+  for(let i=1;i<data.length;i++){
+
+    if(data[i][0]==id){
+
+      sh.deleteRow(i+1);
+
+      return true;
+
+    }
+
+  }
+
+  return false;
+
+}

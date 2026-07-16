@@ -1,0 +1,200 @@
+/* =========================================================
+   VALIDATION
+   Warehouse Management System
+=========================================================*/
+
+/* =========================================================
+   REQUIRED
+=========================================================*/
+
+function validateRequired(value,name){
+
+  if(value===null || value===undefined || String(value).trim()==""){
+
+    throw new Error(name+" wajib diisi.");
+
+  }
+
+  return true;
+
+}
+
+/* =========================================================
+   POSITIVE NUMBER
+=========================================================*/
+
+function validatePositive(value,name){
+
+  value=Number(value);
+
+  if(isNaN(value)){
+
+    throw new Error(name+" harus berupa angka.");
+
+  }
+
+  if(value<0){
+
+    throw new Error(name+" tidak boleh negatif.");
+
+  }
+
+  return true;
+
+}
+
+/* =========================================================
+   UNIQUE SPAREPART CODE
+=========================================================*/
+
+function validateSparepartCode(code,id){
+
+  const data=getSparepart();
+
+  for(let i=0;i<data.length;i++){
+
+    if(
+
+      data[i].code==code &&
+
+      String(data[i].id)!=String(id)
+
+    ){
+
+      throw new Error("Kode Sparepart sudah digunakan.");
+
+    }
+
+  }
+
+  return true;
+
+}
+
+/* =========================================================
+   STOCK AVAILABLE
+=========================================================*/
+
+function validateStock(code,qty){
+
+  qty=Number(qty);
+
+  const data=getSparepart();
+
+  for(let i=0;i<data.length;i++){
+
+    if(data[i].code==code){
+
+      if(Number(data[i].whStock)<qty){
+
+        throw new Error(
+
+          "Stock tidak mencukupi."
+
+        );
+
+      }
+
+      return true;
+
+    }
+
+  }
+
+  throw new Error("Sparepart tidak ditemukan.");
+
+}
+
+/* =========================================================
+   LOGIN
+=========================================================*/
+
+function validateLogin(username,password){
+
+  validateRequired(username,"Username");
+
+  validateRequired(password,"Password");
+
+  return true;
+
+}
+
+/* =========================================================
+   SAVE SPAREPART
+=========================================================*/
+
+function validateSaveSparepart(obj){
+
+  validateRequired(obj.code,"Kode");
+
+  validateRequired(obj.name,"Nama");
+
+  validateRequired(obj.category,"Category");
+
+  validateRequired(obj.supplier,"Supplier");
+
+  validateRequired(obj.location,"Location");
+
+  validateRequired(obj.unit,"Unit");
+
+  validatePositive(obj.systemStock,"System Stock");
+
+  validatePositive(obj.whStock,"Warehouse Stock");
+
+  validatePositive(obj.minimum,"Minimum Stock");
+
+  validateSparepartCode(obj.code,obj.id);
+
+  return true;
+
+}
+
+/* =========================================================
+   STOCK IN
+=========================================================*/
+
+function validateStockIn(obj){
+
+  validateRequired(obj.sparepart,"Sparepart");
+
+  validateRequired(obj.supplier,"Supplier");
+
+  validatePositive(obj.qty,"Qty");
+
+  return true;
+
+}
+
+/* =========================================================
+   STOCK OUT
+=========================================================*/
+
+function validateStockOut(obj){
+
+  validateRequired(obj.sparepart,"Sparepart");
+
+  validatePositive(obj.qty,"Qty");
+
+  validateStock(obj.sparepart,obj.qty);
+
+  return true;
+
+}
+
+/* =========================================================
+   ADJUSTMENT
+=========================================================*/
+
+function validateAdjustment(obj){
+
+  validateRequired(obj.sparepart,"Sparepart");
+
+  if(isNaN(Number(obj.adjustment))){
+
+    throw new Error("Adjustment harus berupa angka.");
+
+  }
+
+  return true;
+
+}

@@ -1,0 +1,251 @@
+<div class="page-card">
+
+    <!-- ============================= -->
+    <!-- HEADER -->
+    <!-- ============================= -->
+
+    <div class="page-header">
+
+        <div class="page-title">
+
+            <h2>
+
+                <i class="bi bi-geo-alt-fill text-primary"></i>
+
+                Master Location
+
+            </h2>
+
+            <p>
+
+                Kelola lokasi penyimpanan sparepart.
+
+            </p>
+
+        </div>
+
+        <button
+
+            class="btn btn-primary-custom"
+
+            onclick="addLocation()">
+
+            <i class="bi bi-plus-circle"></i>
+
+            Tambah Location
+
+        </button>
+
+    </div>
+
+    <!-- ============================= -->
+    <!-- SEARCH -->
+    <!-- ============================= -->
+
+    <div class="row mb-3">
+
+        <div class="col-md-4">
+
+            <div class="search-box">
+
+                <i class="bi bi-search"></i>
+
+                <input
+
+                    id="searchLocation"
+
+                    class="form-control"
+
+                    placeholder="Cari Location..."
+
+                    onkeyup="searchLocation()">
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ============================= -->
+    <!-- TABLE -->
+    <!-- ============================= -->
+
+    <div class="table-card">
+
+        <table class="table table-hover align-middle">
+
+            <thead>
+
+                <tr>
+
+                    <th width="70">ID</th>
+
+                    <th width="180">Kode</th>
+
+                    <th>Nama Location</th>
+
+                    <th width="120">Status</th>
+
+                    <th width="120" class="text-center">
+
+                        Aksi
+
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="locationBody">
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<!-- ====================================================== -->
+<!-- MODAL LOCATION -->
+<!-- ====================================================== -->
+
+<div
+
+class="modal fade"
+
+id="locationModal"
+
+tabindex="-1">
+
+<div class="modal-dialog">
+
+<div class="modal-content">
+
+<div class="modal-header">
+
+<h5 class="modal-title">
+
+<i class="bi bi-geo-alt-fill"></i>
+
+Location
+
+</h5>
+
+<button
+
+class="btn-close"
+
+data-bs-dismiss="modal">
+
+</button>
+
+</div>
+
+<div class="modal-body">
+
+<div class="mb-3">
+
+<label>
+
+Kode Location
+
+</label>
+
+<input
+
+id="locCode"
+
+class="form-control"
+
+placeholder="LOC001">
+
+</div>
+
+<div class="mb-3">
+
+<label>
+
+Nama Location
+
+</label>
+
+<input
+
+id="locName"
+
+class="form-control"
+
+placeholder="Gudang A">
+
+</div>
+
+<div class="mb-3">
+
+<label>
+
+Status
+
+</label>
+
+<select
+
+id="locStatus"
+
+class="form-select">
+
+<option value="ACTIVE">
+
+ACTIVE
+
+</option>
+
+<option value="NON ACTIVE">
+
+NON ACTIVE
+
+</option>
+
+</select>
+
+</div>
+
+</div>
+
+<div class="modal-footer">
+
+<button
+
+class="btn btn-secondary"
+
+data-bs-dismiss="modal">
+
+Batal
+
+</button>
+
+<button
+
+id="btnSaveLocation"
+
+class="btn btn-primary"
+
+onclick="saveLocation()">
+
+<i class="bi bi-check-circle"></i>
+
+<span>
+
+Simpan
+
+</span>
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</div>

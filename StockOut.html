@@ -1,0 +1,313 @@
+<div class="page-card">
+
+    <div class="page-header">
+
+        <div class="page-title">
+
+            <h2>
+
+                <i class="bi bi-box-arrow-up text-danger"></i>
+
+                Stock Out
+
+            </h2>
+
+            <p>
+
+                Pengeluaran Barang Warehouse
+
+            </p>
+
+        </div>
+
+        <button
+            class="btn btn-primary-custom"
+            onclick="addStockOut()">
+
+            <i class="bi bi-plus-circle"></i>
+
+            Barang Keluar
+
+        </button>
+
+    </div>
+
+    <!-- FILTER -->
+
+    <div class="row mb-3">
+
+        <div class="col-md-4">
+
+            <div class="search-box">
+
+                <i class="bi bi-search"></i>
+
+                <input
+
+                    id="searchStockOut"
+
+                    class="form-control"
+
+                    placeholder="Cari Sparepart..."
+
+                    onkeyup="searchStockOut()">
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- TABLE -->
+
+    <div class="table-card">
+
+        <table class="table table-hover align-middle">
+
+            <thead>
+
+                <tr>
+
+                    <th>Tanggal</th>
+
+                    <th>No Transaksi</th>
+
+                    <th>Kode</th>
+
+                    <th>Nama Sparepart</th>
+
+                    <th>Tujuan</th>
+
+                    <th class="text-center">
+
+                        Qty
+
+                    </th>
+
+                    <th>User</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="stockOutBody">
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<!-- ================================================= -->
+<!-- MODAL STOCK OUT -->
+<!-- ================================================= -->
+
+<div class="modal fade" id="stockOutModal">
+
+<div class="modal-dialog modal-lg modal-dialog-centered">
+
+<div class="modal-content">
+
+<div class="modal-header">
+
+<h5>
+
+<i class="bi bi-box-arrow-up"></i>
+
+Stock Out
+
+</h5>
+
+<button
+
+class="btn-close"
+
+data-bs-dismiss="modal">
+
+</button>
+
+</div>
+
+<div class="modal-body">
+
+<div class="row">
+
+<div class="col-md-6 mb-3">
+
+<label>No Transaksi</label>
+
+<input
+
+id="outNumber"
+
+class="form-control"
+
+readonly>
+
+</div>
+
+<div class="col-md-6 mb-3">
+
+<label>Tanggal</label>
+
+<input
+
+id="outDate"
+
+type="date"
+
+class="form-control">
+
+</div>
+
+<div class="col-md-6 mb-3">
+
+<label>Sparepart</label>
+
+<select
+
+id="outSparepart"
+
+class="form-select">
+
+</select>
+
+</div>
+
+<div class="col-md-6 mb-3">
+
+<label>Tujuan</label>
+
+<input
+
+id="outDestination"
+
+class="form-control"
+
+placeholder="Contoh : Produksi">
+
+</div>
+
+<div class="col-md-4 mb-3">
+
+<label>Qty Keluar</label>
+
+<input
+
+id="outQty"
+
+type="number"
+
+class="form-control"
+
+value="1"
+
+min="1">
+
+</div>
+
+<div class="col-md-8 mb-3">
+
+<label>Remark</label>
+
+<input
+
+id="outRemark"
+
+class="form-control"
+
+placeholder="Keterangan">
+
+</div>
+
+</div>
+
+</div>
+
+<div class="modal-footer">
+
+<button
+
+class="btn btn-secondary"
+
+data-bs-dismiss="modal">
+
+Batal
+
+</button>
+
+<button
+
+class="btn btn-danger"
+
+onclick="saveStockOut()">
+
+<i class="bi bi-check-circle"></i>
+
+Simpan
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+function addStockOut(){
+
+    document.getElementById("outNumber").value=
+
+        "OUT-"+Date.now();
+
+    document.getElementById("outDate").value=
+
+        new Date().toISOString().split("T")[0];
+
+    document.getElementById("outQty").value=1;
+
+    document.getElementById("outDestination").value="";
+
+    document.getElementById("outRemark").value="";
+
+    new bootstrap.Modal(
+
+        document.getElementById("stockOutModal")
+
+    ).show();
+
+}
+
+function saveStockOut(){
+
+    showToast(
+
+        "success",
+
+        "Berhasil",
+
+        "Stock Out berhasil disimpan."
+
+    );
+
+    bootstrap.Modal.getInstance(
+
+        document.getElementById("stockOutModal")
+
+    ).hide();
+
+}
+
+function searchStockOut(){
+
+    // Terhubung ke Apps Script pada tahap berikutnya
+
+}
+
+</script>

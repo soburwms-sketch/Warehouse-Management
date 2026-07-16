@@ -1,0 +1,301 @@
+<div class="page-card">
+
+    <div class="page-header">
+
+        <div class="page-title">
+
+            <h2>
+
+                <i class="bi bi-bar-chart-fill text-primary"></i>
+
+                Report
+
+            </h2>
+
+            <p>
+
+                Laporan Warehouse Management System
+
+            </p>
+
+        </div>
+
+    </div>
+
+    <!-- FILTER -->
+
+    <div class="row mb-4">
+
+        <div class="col-md-3">
+
+            <label>Dari Tanggal</label>
+
+            <input
+
+                type="date"
+
+                id="reportFrom"
+
+                class="form-control">
+
+        </div>
+
+        <div class="col-md-3">
+
+            <label>Sampai Tanggal</label>
+
+            <input
+
+                type="date"
+
+                id="reportTo"
+
+                class="form-control">
+
+        </div>
+
+        <div class="col-md-3">
+
+            <label>Jenis Report</label>
+
+            <select
+
+                id="reportType"
+
+                class="form-select">
+
+                <option value="stock">Stock</option>
+
+                <option value="stockin">Stock In</option>
+
+                <option value="stockout">Stock Out</option>
+
+                <option value="adjustment">Adjustment</option>
+
+                <option value="lowstock">Low Stock</option>
+
+            </select>
+
+        </div>
+
+        <div class="col-md-3 d-flex align-items-end">
+
+            <button
+
+                class="btn btn-primary w-100"
+
+                onclick="loadReport()">
+
+                <i class="bi bi-search"></i>
+
+                Tampilkan
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- SUMMARY -->
+
+    <div class="row mb-4">
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <h6>Total Sparepart</h6>
+
+                    <h3 id="sumPart">0</h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <h6>Total Stock</h6>
+
+                    <h3 id="sumStock">0</h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <h6>Stock In</h6>
+
+                    <h3 id="sumIn">0</h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <h6>Stock Out</h6>
+
+                    <h3 id="sumOut">0</h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ACTION -->
+
+    <div class="mb-3">
+
+        <button
+
+            class="btn btn-success"
+
+            onclick="exportExcel()">
+
+            <i class="bi bi-file-earmark-excel"></i>
+
+            Export Excel
+
+        </button>
+
+        <button
+
+            class="btn btn-danger"
+
+            onclick="printPDF()">
+
+            <i class="bi bi-file-earmark-pdf"></i>
+
+            Export PDF
+
+        </button>
+
+        <button
+
+            class="btn btn-secondary"
+
+            onclick="window.print()">
+
+            <i class="bi bi-printer"></i>
+
+            Print
+
+        </button>
+
+    </div>
+
+    <!-- TABLE -->
+
+    <div class="table-card">
+
+        <table class="table table-hover align-middle">
+
+            <thead>
+
+                <tr>
+
+                    <th>Tanggal</th>
+
+                    <th>Kode</th>
+
+                    <th>Nama</th>
+
+                    <th>Kategori</th>
+
+                    <th>Supplier</th>
+
+                    <th>Lokasi</th>
+
+                    <th class="text-center">Qty</th>
+
+                    <th>Status</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="reportBody">
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<script>
+
+function loadReport(){
+
+    showToast(
+
+        "info",
+
+        "Report",
+
+        "Memuat data report..."
+
+    );
+
+    // nanti terhubung Apps Script
+
+}
+
+function exportExcel(){
+
+    showToast(
+
+        "success",
+
+        "Export",
+
+        "Export Excel dimulai."
+
+    );
+
+    // Apps Script Export
+
+}
+
+function printPDF(){
+
+    showToast(
+
+        "success",
+
+        "Export",
+
+        "Export PDF dimulai."
+
+    );
+
+    // Apps Script PDF
+
+}
+
+</script>

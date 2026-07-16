@@ -1,0 +1,123 @@
+/*************************************************
+ * WAREHOUSE MANAGEMENT SYSTEM
+ * CONFIGURATION
+ *************************************************/
+
+/**
+ * Spreadsheet aktif
+ */
+const DB = SpreadsheetApp.getActiveSpreadsheet();
+
+/**
+ * Default Image
+ */
+const DEFAULT_IMAGE =
+"https://placehold.co/300x300?text=NO+IMAGE";
+
+/*************************************************
+ * AUTO NUMBER
+ *************************************************/
+
+function generateID(sheetName){
+
+  const sh = DB.getSheetByName(sheetName);
+
+  if(!sh){
+
+    throw new Error("Sheet tidak ditemukan : " + sheetName);
+
+  }
+
+  return sh.getLastRow();
+
+}
+
+/*************************************************
+ * DATE
+ *************************************************/
+
+function now(){
+
+  return Utilities.formatDate(
+
+    new Date(),
+
+    Session.getScriptTimeZone(),
+
+    DATETIME_FORMAT
+
+  );
+
+}
+
+function today(){
+
+  return Utilities.formatDate(
+
+    new Date(),
+
+    Session.getScriptTimeZone(),
+
+    DATE_FORMAT
+
+  );
+
+}
+
+/*************************************************
+ * RESPONSE
+ *************************************************/
+
+function success(message,data){
+
+  return{
+
+    success:true,
+
+    message:message || "Success",
+
+    data:data || null
+
+  };
+
+}
+
+function failed(message){
+
+  return{
+
+    success:false,
+
+    message:message || "Failed"
+
+  };
+
+}
+
+/*************************************************
+ * LOG
+ *************************************************/
+
+function writeLog(module,action,user){
+
+  const sh = DB.getSheetByName(SHEET_LOG);
+
+  if(!sh) return;
+
+  sh.appendRow([
+
+    autoID(),
+
+    now(),
+
+    user || "",
+
+    module,
+
+    action,
+
+    ""
+
+  ]);
+
+}

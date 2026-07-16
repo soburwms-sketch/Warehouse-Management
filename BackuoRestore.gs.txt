@@ -1,0 +1,218 @@
+/* =========================================================
+   BACKUP & RESTORE
+   Warehouse Management System
+=========================================================*/
+
+/* =========================================================
+   BACKUP DATABASE
+=========================================================*/
+
+function backupDatabase(){
+
+  const source=SpreadsheetApp.getActiveSpreadsheet();
+
+  const backup=SpreadsheetApp.create(
+
+    "WMS_BACKUP_"+
+
+    Utilities.formatDate(
+
+      new Date(),
+
+      Session.getScriptTimeZone(),
+
+      "yyyyMMdd_HHmmss"
+
+    )
+
+  );
+
+  source.getSheets().forEach(function(sheet){
+
+    const copy=sheet.copyTo(backup);
+
+    copy.setName(sheet.getName());
+
+  });
+
+  backup.deleteSheet(
+
+    backup.getSheets()[0]
+
+  );
+
+  return{
+
+    success:true,
+
+    url:backup.getUrl(),
+
+    id:backup.getId()
+
+  };
+
+}
+
+/* =========================================================
+   LIST SHEET
+=========================================================*/
+
+function getAllSheetNames(){
+
+  return SpreadsheetApp
+
+      .getActiveSpreadsheet()
+
+      .getSheets()
+
+      .map(function(s){
+
+          return s.getName();
+
+      });
+
+}
+
+/* =========================================================
+   EXPORT DATABASE JSON
+=========================================================*/
+
+function exportDatabaseJSON(){
+
+  const ss=SpreadsheetApp.getActiveSpreadsheet();
+
+  const result={};
+
+  ss.getSheets().forEach(function(sheet){
+
+      result[sheet.getName()]=
+
+      sheet
+
+      .getDataRange()
+
+      .getValues();
+
+  });
+
+  return JSON.stringify(result);
+
+}
+
+/* =========================================================
+   DATABASE INFORMATION
+=========================================================*/
+
+function databaseInfo(){
+
+  const ss=SpreadsheetApp.getActiveSpreadsheet();
+
+  return{
+
+      id:ss.getId(),
+
+      name:ss.getName(),
+
+      url:ss.getUrl(),
+
+      timezone:ss.getSpreadsheetTimeZone(),
+
+      totalSheet:ss.getSheets().length
+
+  };
+
+}
+
+/* =========================================================
+   CHECK DATABASE
+=========================================================*/
+
+function checkDatabase(){
+
+  const required=[
+
+    SHEET_USER,
+
+    SHEET_CATEGORY,
+
+    SHEET_SUPPLIER,
+
+    SHEET_LOCATION,
+
+    SHEET_UNIT,
+
+    SHEET_SPAREPART,
+
+    SHEET_STOCKIN,
+
+    SHEET_STOCKOUT,
+
+    SHEET_ADJUSTMENT
+
+  ];
+
+  const names=getAllSheetNames();
+
+  const missing=[];
+
+  required.forEach(function(s){
+
+      if(names.indexOf(s)<0){
+
+          missing.push(s);
+
+      }
+
+  });
+
+  return{
+
+      success:missing.length==0,
+
+      missing:missing
+
+  };
+
+}
+
+/* =========================================================
+   CLEAR TRANSACTION
+=========================================================*/
+
+function clearTransaction(){
+
+  const list=[
+
+      SHEET_STOCKIN,
+
+      SHEET_STOCKOUT,
+
+      SHEET_ADJUSTMENT
+
+  ];
+
+  list.forEach(function(name){
+
+      const sh=getSheet(name);
+
+      if(sh.getLastRow()>1){
+
+          sh.getRange(
+
+              2,
+
+              1,
+
+              sh.getLastRow()-1,
+
+              sh.getLastColumn()
+
+          ).clearContent();
+
+      }
+
+  });
+
+  return true;
+
+}

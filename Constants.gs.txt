@@ -1,0 +1,120 @@
+/* =========================================================
+   CONSTANTS
+   Warehouse Management System
+=========================================================*/
+
+/* =========================================================
+   SHEET NAME
+=========================================================*/
+
+const SHEET_USER="User";
+const SHEET_CATEGORY="Category";
+const SHEET_SUPPLIER="Supplier";
+const SHEET_LOCATION="Location";
+const SHEET_UNIT="Unit";
+const SHEET_SPAREPART="Sparepart";
+const SHEET_STOCKIN="StockIn";
+const SHEET_STOCKOUT="StockOut";
+const SHEET_ADJUSTMENT="Adjustment";
+const SHEET_LOG="Log";
+
+/* =========================================================
+   STATUS
+=========================================================*/
+
+const STATUS_ACTIVE="ACTIVE";
+const STATUS_INACTIVE="INACTIVE";
+
+/* =========================================================
+   ROLE
+=========================================================*/
+
+const ROLE_ADMIN="ADMIN";
+const ROLE_MANAGER="MANAGER";
+const ROLE_USER="USER";
+
+/* =========================================================
+   SPAREPART COLUMN
+=========================================================*/
+
+const SP={
+  ID:1,
+  CODE:2,
+  IMAGE:3,
+  NAME:4,
+  CATEGORY:5,
+  SUPPLIER:6,
+  LOCATION:7,
+  SYSTEM:8,
+  WH:9,
+  DIFFERENCE:10,
+  MINIMUM:11,
+  UNIT:12,
+  STATUS:13,
+  REMARK:14
+};
+
+/* =========================================================
+   STOCK IN COLUMN
+=========================================================*/
+
+const SI={
+  ID:1,
+  NUMBER:2,
+  DATE:3,
+  SPAREPART:4,
+  SUPPLIER:5,
+  QTY:6,
+  REMARK:7,
+  USER:8
+};
+
+/* =========================================================
+   STOCK OUT COLUMN
+=========================================================*/
+
+const SO={
+  ID:1,
+  NUMBER:2,
+  DATE:3,
+  SPAREPART:4,
+  DESTINATION:5,
+  QTY:6,
+  REMARK:7,
+  USER:8
+};
+
+/* =========================================================
+   ADJUSTMENT COLUMN
+=========================================================*/
+
+const ADJ={
+  ID:1,
+  DATE:2,
+  SPAREPART:3,
+  SYSTEM:4,
+  WH:5,
+  ADJUSTMENT:6,
+  REMARK:7,
+  USER:8
+};
+
+/* =========================================================
+   USER COLUMN
+=========================================================*/
+
+const USERCOL={
+  ID:1,
+  NAME:2,
+  USERNAME:3,
+  PASSWORD:4,
+  ROLE:5,
+  STATUS:6
+};
+
+/* =========================================================
+   DATE FORMAT
+=========================================================*/
+
+const DATE_FORMAT="dd/MM/yyyy";
+const DATETIME_FORMAT="dd/MM/yyyy HH:mm:ss";
